@@ -1,0 +1,70 @@
+## -*- mode: Text -*-
+
+-------------------------------------------------------------------------------
+
+needed immediately: guards on overflow for signed arithmetic, as gcc
+actually takes advantage of the fact that this is undefined in C (as
+opposed to most compilers which reliably give you 2's complement
+overflow)
+
+-------------------------------------------------------------------------------
+
+From: John Regehr <regehr@cs.utah.edu>
+To: Eric Eide <eeide@cs.utah.edu>
+Subject: randprog feature request
+Date: Fri, 04 Jan 2008 12:54:25 -0700
+
+Something that may make it easier to track down compiler bugs would be a
+collection of flags, each of which disables some subset of the code
+generation, e.g. -no-loops, -no-ifs, -no-fn-calls, -no-shifts, etc.
+
+-------------------------------------------------------------------------------
+
+Repair the effect sanity-checking in CGContext.  Basically, check that the
+thing you are doing doesn't interfere with the context.  Note that this is too
+broad:
+
+void
+CGContext::sanity_check(void)
+{
+	if (effect_accum && !effect_context.is_side_effect_free()) {
+		assert(effect_accum->is_side_effect_free());
+	}
+}
+
+Checking for side-effects only is no good in general.  We can usually have
+side-effects in both the context and accum, as long as they do not overlap.
+
+-------------------------------------------------------------------------------
+
+Fix what "side_effect_free" means.  It should either mean side-effect free, or
+it should be renamed to "volatile-free" or similar.  See:
+
+void
+Effect::write_var(const Variable *v)
+{
+	write_vars.push_back(v);
+	// pure = pure;
+	// TODO: not quite correct below ---
+	// --- but I think we want "side_effect_free" to mean "volatile_free".
+	side_effect_free &= !v->isVolatile;
+	// side_effect_free = false;
+}
+
+-------------------------------------------------------------------------------
+
+John's wish list:
+  - |=, *=, +=, &=, etc.
+  - switches
+  - ++, -- 
+  - structs
+    - volatile and/or const
+    - some volatile and/or const members
+  - leave out parens to test order of eval code
+  - pointers, especially to volatile
+  - arrays
+  - int64
+
+-------------------------------------------------------------------------------
+
+## End of file.

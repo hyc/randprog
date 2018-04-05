@@ -1,0 +1,13 @@
+-*- mode: Text -*-
+
+`randprog' was written by Eric Eide and John Regehr at the University of Utah.
+
+  Eric Eide <eeide@cs.utah.edu>
+  John Regehr <regehr@cs.utah.edu>
+
+Contact Eric and John for issues related to this program.
+
+The current `randprog' is based on an earlier random program generator written
+by Bryan Turner.
+
+  Bryan Turner <bryan.turner@pobox.com>

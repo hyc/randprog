@@ -1,0 +1,15 @@
+-*- mode: Text -*-
+
+                 randprog --- a random generator of C programs
+
+                           Eric Eide and John Regehr
+                          {eeide,regehr}@cs.utah.edu
+
+                    University of Utah School of Computing
+                            http://www.cs.utah.edu/
+
+
+Please send bug reports and fixes to Eric Eide and John Regehr.
+
+This program is based on an earlier random program generator written by Bryan
+Turner <bryan.turner@pobox.com>.

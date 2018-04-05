@@ -1,0 +1,18 @@
+-*- mode: Text -*-
+
+Make it.  Move the compiled `randprog' program to where you want it.
+
+Boost 1.34 is required.  If you need to override the default Boost on
+your system, pass the --with-boost=location argument to the configure
+script.
+
+Tested on Cygwin, Ubuntu Feisty, Ubunty Gutsy.
+
+To compile the programs output by `randprog', the following header
+files need to be installed in the C compiler's include search path:
+
+  platform_avr.h
+  platform_generic.h
+  random_runtime.h
+
+## End of file.
