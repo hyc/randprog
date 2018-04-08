@@ -92,7 +92,7 @@ static string
 GenerateRandomIntConstant(void)
 {
 	// Int constant
-	string val = RandomDigits( 15 );
+	string val = "0x" + RandomHexDigits( 8 );
 	return val;
 }
 
@@ -102,6 +102,8 @@ GenerateRandomFloatConstant(void)
 {
 	// Generate a random floating point value with up to 10 digits of precision. (should look up precision of float/double.. 23 bits for IEEE-32?)
 	string val = RandomDigits(5) + "." + RandomDigits(5);
+	if (val.c_str()[0] == '0')
+		val = "1" + val;
 	return val;
 }
 
