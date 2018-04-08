@@ -64,6 +64,9 @@ BlockProbability(Block &block)
 	if (block.stm.empty()) {
 		return true;
 	}
+	if (FuncListSize() < 10) {
+		return true;
+	}
 	// 50% probability for each additional statement.  Should upgrade this to
 	// generate a uniform distribution around a selected block size (or
 	// function size?)
