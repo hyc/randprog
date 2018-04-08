@@ -239,16 +239,7 @@ FunctionInvocation::get_type(void) const
 		case eBitXor:
 		case eBitAnd:
 		case eBitOr:
-			{
-				const Type &l_type = param_value[0]->get_type();
-				const Type &r_type = param_value[1]->get_type();
-				// XXX --- not really right!
-				if (!(l_type.is_signed()) && !(r_type.is_signed())) {
-					return Type::get_simple_type(eInt);
-				} else {
-					return Type::get_simple_type(eUInt);
-				}
-			}
+			return Type::get_simple_type(eInt);
 			break;
 
 		case eCmpGt:
@@ -259,20 +250,12 @@ FunctionInvocation::get_type(void) const
 		case eCmpNe:
 		case eAnd:
 		case eOr:
-			return Type::get_simple_type(eInt);
+			return Type::get_simple_type(eBool);
 			break;
 
 		case eRShift:
 		case eLShift:
-			{
-				const Type &l_type = param_value[0]->get_type();
-				// XXX --- not really right!
-				if (!l_type.is_signed()) {
-					return Type::get_simple_type(eInt);
-				} else {
-					return Type::get_simple_type(eUInt);
-				}
-			}
+			return Type::get_simple_type(eInt);
 			break;
 		}
 	}
@@ -361,31 +344,6 @@ FunctionInvocation::Output(std::ostream &out) const
 		// One of the Binary Ops
 		out << "(";
 		switch (eFunc) {
-		case eLShift:
-		case eRShift:
-			// We handle shifts specially in order to avoid undefined behavior.
-			if (eFunc == eLShift) {
-				out << "lshift_";
-			} else {
-				out << "rshift_";
-			}
-			if (param_value[0]->get_type().is_signed()) {
-				out << "s_";
-			} else {
-				out << "u_";
-			}
-			if (param_value[1]->get_type().is_signed()) {
-				out << "s";
-			} else {
-				out << "u";
-			}
-			out << "(";
-			param_value[0]->Output(out);
-			out << ", ";
-			param_value[1]->Output(out);
-			out << ")";
-			break;
-			
 		default:
 			param_value[0]->Output(out);
 			out << " ";
@@ -397,11 +355,8 @@ FunctionInvocation::Output(std::ostream &out) const
 			default:
 				break;
 			case eMod:
-				out << "mod_rhs(";
-				need_range_restriction = true;
-				break;
 			case eDiv:
-				out << "div_rhs(";
+				out << "nonzero(";
 				need_range_restriction = true;
 				break;
 			}

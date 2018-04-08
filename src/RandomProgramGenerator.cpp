@@ -100,25 +100,6 @@ using namespace std;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static const char runtime_include[] = "\
-#include \"random_runtime.h\"\n\
-";
-
-static const char platform_include[] = "\
-#if defined(__AVR_ARCH__)\n\
-#  include \"platform_avr.h\"\n\
-#elif defined (__MSP430__)\n\
-#  include \"platform_msp430.h\"\n\
-#else\n\
-#  include \"platform_generic.h\"\n\
-#endif\n\
-";
-
-static const char volatile_include[] = "\
-/* To use wrapper functions, compile this program with -DWRAP_VOLATILES=1. */\n\
-#include \"volatile_runtime.h\"\n\
-";
-
 // ----------------------------------------------------------------------------
 // Globals
 
@@ -155,14 +136,9 @@ OutputHeader(ostream &out, int argc, char *argv[])
 	out << " */" << endl;
 	out << endl;
 
-	out << "#include <stdint.h>" << endl;
-
-	if (CGOptions::print_hash()) {
-		out << "#include <stdio.h>" << endl;
-	}
-	if (CGOptions::compute_hash()) {
-		out << "uint16_t context = 0;" << endl;
-	}
+    out << "function nonzero(n) {" << endl;
+	out << "  if (n == 0) return 1;" << endl;
+	out << "  return n; }" <<endl;
 	out << endl;
 
 	if (CGOptions::depth_protect()) {
@@ -170,12 +146,6 @@ OutputHeader(ostream &out, int argc, char *argv[])
 		// Make depth signed, to cover our tails.
 		out << "int32_t DEPTH = 0;" << endl;
 		out << endl;
-	}
-
-	out << platform_include << endl;
-	out << runtime_include << endl;
-	if (CGOptions::wrap_volatiles()) {
-		out << volatile_include << endl;
 	}
 }
 
@@ -193,9 +163,6 @@ OutputMain(ostream &out)
 		FunctionInvocation::make_random(GetFirstFunction(), cg_context);
 	out << endl << endl
 		<< "/* ---------------------------------------- */" << endl;
-	out << "int main(int argc, char *argv[])" << endl;
-	out << "{" << endl;
-	out << "    platform_main_begin();" << endl;
 	out << "    /* Call the first function */" << endl;
 	out << "    ";
 	invoke->Output(out);
@@ -206,13 +173,6 @@ OutputMain(ostream &out)
 	if (CGOptions::print_hash()) {
 		out << "    printf(\"%d\\n\", context);" << endl;
 	}
-	if (CGOptions::compute_hash()) {
-		out << "    platform_main_end(context);" << endl;
-	} else {
-		out << "    platform_main_end(0);" << endl;
-	}
-	out << "    return 0;" << endl;
-	out << "}" << endl;
 }
 
 // ----------------------------------------------------------------------------
@@ -356,7 +316,6 @@ main(int argc, char **argv)
 	ostream &out = cout;
 	OutputHeader(out, argc, argv);
 	OutputGlobalVariables(out);
-	OutputForwardDeclarations(out);
 	OutputFunctions(out);
 	OutputMain(out);
 	

@@ -248,7 +248,6 @@ OutputFormalParam(Variable *var, std::ostream *pOut)
 	std::ostream &out = *pOut;
 	if ( !param_first ) out << ", ";
 	param_first = false;
-	var->type->Output( out );
 	out << " " << var->name;
 }
 
@@ -258,9 +257,7 @@ OutputFormalParam(Variable *var, std::ostream *pOut)
 void
 Function::OutputFormalParamList(std::ostream &out)
 {
-	if (param.size() == 0) {
-		Type::get_simple_type(eVoid).Output(out);
-	} else {
+	if (param.size() > 0) {
 		param_first = true;
 		for_each(param.begin(),
 				 param.end(),
@@ -274,8 +271,7 @@ Function::OutputFormalParamList(std::ostream &out)
 void
 Function::OutputHeader(std::ostream &out)
 {
-	return_type.Output( out );
-	out << " " << name << "(";
+	out << "function " << name << "(";
 	OutputFormalParamList( out );
 	out << ")";
 }

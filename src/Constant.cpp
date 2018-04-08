@@ -82,42 +82,21 @@ Constant::~Constant(void)
 
 // --------------------------------------------------------------
 static string
-GenerateRandomCharConstant(void)
+GenerateRandomBoolConstant(void)
 {
-	string ch;
-	ch = string("0x") + RandomHexDigits(2) + "L";
-	return ch;
+	return rnd_flipcoin(50) ? "true" : "false";
 }
 
 // --------------------------------------------------------------
 static string
 GenerateRandomIntConstant(void)
 {
-	// Int constant - Max 8 Hex digits on 32-bit platforms
-	string val = "0x" + RandomHexDigits( 8 ) + "L";
+	// Int constant
+	string val = RandomDigits( 15 );
 	return val;
 }
 
 // --------------------------------------------------------------
-static string
-GenerateRandomShortConstant(void)
-{
-	// Short constant - Max 4 Hex digits on 32-bit platforms
-	string val = "0x" + RandomHexDigits( 4 ) + "L";
-	return val;
-}
-
-// --------------------------------------------------------------
-static string
-GenerateRandomLongConstant(void)
-{
-	// Long constant - Max 8 Hex digits on 32-bit platforms
-	string val = "0x" + RandomHexDigits( 8 ) + "L";
-	return val;
-}
-
-// --------------------------------------------------------------
-#if 0
 static string
 GenerateRandomFloatConstant(void)
 {
@@ -125,7 +104,6 @@ GenerateRandomFloatConstant(void)
 	string val = RandomDigits(5) + "." + RandomDigits(5);
 	return val;
 }
-#endif // 0
 
 // --------------------------------------------------------------
 /*
@@ -151,7 +129,7 @@ Constant::make_random(CGContext &cg_context,
 	const Type &t = Type::get_simple_type(eType);
 	string v;
 
-	if ((eType != eVoid) && rnd_flipcoin(50)) {
+	if ((eType != eVoid) && (eType != eBool) && rnd_flipcoin(50)) {
 		int num;
 		if (rnd_flipcoin(50)) {
 			num = rnd_upto(3)-1;
@@ -160,21 +138,13 @@ Constant::make_random(CGContext &cg_context,
 		}
 		ostringstream oss;
 		oss << num;
-		v = oss.str() + "L";
+		v = oss.str();
 	} else {
 		switch (eType) {
 		case eVoid:     v = "/* void */";						break;
-		case eChar:     v = GenerateRandomCharConstant();		break;
+		case eBool:     v = GenerateRandomBoolConstant();		break;
 		case eInt:      v = GenerateRandomIntConstant();		break;
-		case eShort:    v = GenerateRandomShortConstant();		break;
-		case eLong:     v = GenerateRandomLongConstant();		break;
-		case eUChar:    v = GenerateRandomCharConstant();		break;
-		case eUInt:     v = GenerateRandomIntConstant();		break;
-		case eUShort:   v = GenerateRandomShortConstant();		break;
-		case eULong:    v = GenerateRandomLongConstant();		break;
-//	    case eLongLong: v = GenerateRandomLongLongConstant();	break;
-//	    case eFloat:    v = GenerateRandomFloatConstant();		break;
-//	    case eDouble:   v = GenerateRandomFloatConstant();		break;
+	    case eFloat:    v = GenerateRandomFloatConstant();		break;
 		}
 	}
 

@@ -63,19 +63,11 @@ enum eTypeDesc
 enum eSimpleType
 {
 	eVoid,
-	eChar,
+	eBool,
 	eInt,
-	eShort,
-	eLong,
-	eUChar,
-	eUInt,
-	eUShort,
-	eULong
-//	eLongLong,	// Allows unsigned?
-//	eFloat,
-//	eDouble,
+	eFloat
 };
-#define MAX_SIMPLE_TYPES ((eSimpleType) (eULong+1))
+#define MAX_SIMPLE_TYPES ((eSimpleType) (eFloat+1))
 
 /*
  *
@@ -95,8 +87,6 @@ public:
 
 	static const Type &get_simple_type(eSimpleType simple_type);
 	
-	bool is_signed(void) const;
-	unsigned long SizeInBytes(void) const;
 	void Output(std::ostream &) const;
 
 // private:	

@@ -151,58 +151,6 @@ Type::choose_random(void)
 	return AllTypes[rnd_upto(AllTypes.size())];
 }
 
-bool
-Type::is_signed(void) const
-{
-	switch (eType) {
-	default:
-		return false;
-		
-	case eSimple:
-		switch (simple_type) {
-		case eUChar:
-		case eUInt:
-		case eUShort:
-		case eULong:
-			return false;
-			break;
-		default:
-			break;
-		}
-		break;
-	}
-	return true;
-}
-
-unsigned long
-Type::SizeInBytes(void) const
-{
-	switch (eType) {
-	default:
-	case eSimple:
-		switch (simple_type) {
-		case eVoid:		return 0;
-		case eChar:		return 1;
-		case eInt:		return 4;
-		case eShort:	return 2;
-		case eLong:		return 4;
-		case eUChar:	return 1;
-		case eUInt:		return 4;
-		case eUShort:	return 2;
-		case eULong:	return 4;
-//		case eLongLong:	return 8;
-//		case eFloat:	return 4;
-//		case eDouble:	return 8;
-		}
-		break;
-//	case ePointer:	return 4;
-//	case eArray:
-//	case eUnion:
-//	case eStruct:
-	}
-	return 0;
-}
-
 // ---------------------------------------------------------------------
 void
 Type::Output(std::ostream &out) const
@@ -211,17 +159,9 @@ Type::Output(std::ostream &out) const
 	case eSimple:
 		switch (simple_type) {
 		case eVoid:		out << "void"; break;
-		case eChar:		out << "int8_t"; break;
-		case eInt:		out << "int32_t"; break;
-		case eShort:	out << "int16_t"; break;
-		case eLong:		out << "int32_t"; break;
-		case eUChar:	out << "uint8_t"; break;
-		case eUInt:		out << "uint32_t"; break;
-		case eUShort:	out << "uint16_t"; break;
-		case eULong:	out << "uint32_t"; break;
-//		case eFloat:	out << "float"; break;
-//		case eDouble:	out << "double"; break;
-//      case eLongLong: out << "long long"; break;
+		case eBool:		out << "bool"; break;
+		case eInt:		out << "int"; break;
+		case eFloat:	out << "float"; break;
 		}
 		break;
 //	case ePointer:  ptr_type->OutputType( out ); out << "*"; break;

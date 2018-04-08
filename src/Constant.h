@@ -63,7 +63,6 @@ public:
 	// Unused:
 	// const std::string &get_value(void) const { return value; }
 	
-	// unsigned long SizeInBytes(void) const;
 	virtual void Output(std::ostream &) const;
 
 private:	
