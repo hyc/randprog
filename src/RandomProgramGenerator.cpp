@@ -77,9 +77,6 @@ FUTURE:
 
 #include <ostream>
 
-#include <boost/program_options.hpp>
-namespace po = boost::program_options;
-
 #include "Common.h"
 
 #include "Block.h"
@@ -142,9 +139,8 @@ OutputHeader(ostream &out, int argc, char *argv[])
 	out << endl;
 
 	if (CGOptions::depth_protect()) {
-		out << "#define MAX_DEPTH (5)" << endl;
-		// Make depth signed, to cover our tails.
-		out << "int32_t DEPTH = 0;" << endl;
+		out << "var MAX_DEPTH = 5;" << endl;
+		out << "var DEPTH = 0;" << endl;
 		out << endl;
 	}
 }
@@ -179,114 +175,14 @@ OutputMain(ostream &out)
 int
 main(int argc, char **argv)
 {
-	po::options_description general_opts("General options");
-	general_opts.add_options()
-		("help",
-		 // XXX --- If user says "--help" twice, he gets an error.  Bah.
-		 "Display this help message and exit")
-		("version,v",
-		 "Display this program's version info and exit")
-		;
-	
-	po::options_description codegen_opts("Program-generation options");
-	codegen_opts.add_options()
-		("seed,s",
-		 po::value<unsigned long>(),
-		 "Set the seed value for the random program generator")
-		("compute-hash",
-		 // If we do not specify "true" as the printed representation, the help
-		 // message prints the default value as "1".
-		 po::value<bool>()->
-		 default_value(true, "true"),
-		 "Have the generated program compute a hash over its global variables")
-		("print-hash",
-		 po::value<bool>()->
-		 default_value(false, "false"),
-		 ("Have the generated program compute and output a hash over its "
-		  "global variables"))
-		("depth-protect",
-		 po::value<bool>()->
-		 default_value(false, "false"),
-		 ("Have the generated program protect itself from very deep and/or "
-		  "unbounded recursion"))
-		("max-funcs",
-		 // TODO: use validator, instead of checking value later "by hand."
-		 po::value<int>()->
-		 default_value(CGOPTIONS_DEFAULT_MAX_FUNCS),
-		 ("Set the maximum number of randomly generated functions in the "
-		  "output program"))
-		("max-stmt-depth",
-		 // TODO: use validator, instead of checking value later "by hand."
-		 po::value<int>()->
-		 default_value(CGOPTIONS_DEFAULT_MAX_STMT_DEPTH),
-		 "Set the maximum nesting depth for statements in the output program")
-		("wrap-volatiles",
-		 po::value<bool>()->
-		 default_value(false, "false"),
-		 "Wrap accesses to volatile variables within `VOL_*' macros")
-		// TODO: move some of these "fine grain" generator options into a
-		// separate group.
-		("allow-const-volatile",
-		 po::value<bool>()->
-		 default_value(true, "true"),
-		 "Allow `const volatile' variables in the output program")
-		;
-
-	po::options_description all_opts("Options");
-	all_opts.add(general_opts).add(codegen_opts);
-
-	po::variables_map vm;
-	try {
-		po::store(po::parse_command_line(argc, argv, all_opts), vm);
-	}
-	catch (po::unknown_option e) {
-		cerr << argv[0] << ": error: " << e.what() << endl;
-		cerr << "Type `" << argv[0] << " --help' "
-             << "for a summary of command-line options." << endl;
-		return 1;
-	}
-	catch (po::invalid_option_value e) {
-		cerr << argv[0] << ": error: " << e.what() << endl;
-		return 1;
-	}
-	catch (po::invalid_command_line_syntax e) {
-		cerr << argv[0] << ": error: " << e.what() << endl;
-		return 1;
-	}
-	catch (po::multiple_occurrences /* e */) {
-		// XXX --- the exception doesn't tell us *which* option?  Bah.
-		cerr << argv[0] << ": error: "
-			 << "too many occurrences of some command-line option" << endl;
-		return 1;
-	}
-
-	po::notify(vm);
-
-	if (vm.count("version")) {
-		print_version();
-		return 0;
-	}
-
-	if (vm.count("help")) {
-		cout << "Usage: " << argv[0] << " [options]" << endl;
-		cout << all_opts;
-		return 0;
-	}
-
-	if (vm.count("seed")) {
-		g_Seed = vm["seed"].as<unsigned long>();
-	} else {
-		g_Seed = platform_gen_seed();
-	}
+	g_Seed = platform_gen_seed();
 	seedrand(g_Seed);
 
-	CGOptions::compute_hash(vm["compute-hash"].as<bool>());
-	CGOptions::print_hash(vm["print-hash"].as<bool>());
-	CGOptions::depth_protect(vm["depth-protect"].as<bool>());
-	CGOptions::max_funcs(vm["max-funcs"].as<int>());
-	CGOptions::max_stmt_depth(vm["max-stmt-depth"].as<int>());
-	CGOptions::wrap_volatiles(vm["wrap-volatiles"].as<bool>());
-	CGOptions::allow_const_volatile(vm["allow-const-volatile"].as<bool>());
+	CGOptions::compute_hash(true);
+	CGOptions::print_hash(true);
+	CGOptions::depth_protect(true);
+	CGOptions::max_funcs(CGOPTIONS_DEFAULT_MAX_FUNCS);
+	CGOptions::max_stmt_depth(CGOPTIONS_DEFAULT_MAX_STMT_DEPTH);
 
 	if (CGOptions::print_hash()) {
 		CGOptions::compute_hash(true);
