@@ -35,7 +35,7 @@
 #include <string>
 
 // Old stuff.
-void			seedrand(char *seed);
+void			seedrand(const char *seed, int len);
 unsigned long	genrand();
 
 // Old stuff.

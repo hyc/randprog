@@ -42,36 +42,10 @@ using namespace std;
 
 static sfmt_t sfmt_state;
 
-int hex2bin( char *in, char *out0, int len )
-{
-	int i;
-	char *out = out0;
-	for (i=0; i<len; i+=2) {
-		char nyb1, nyb2;
-		nyb1 = *in++;
-		nyb2 = *in++;
-		nyb1 &= ~0x20;
-		nyb2 &= ~0x20;
-		if (nyb1 & 0x40)
-			nyb1 -= 55;
-		else
-			nyb1 &= 0x0f;
-		if (nyb2 & 0x40)
-			nyb2 -= 55;
-		else
-			nyb2 &= 0x0f;
-		*out++ = nyb1 << 4 | nyb2;
-	}
-	return out - out0;
-}
-
-void seedrand( char *seed )
+void seedrand( const char *seed, int len )
 {
 	uint64_t state[25];
-	int len = strlen(seed);
-	char *binseed = (char *)alloca(len/2);
-	len = hex2bin(seed, binseed, len);
-	keccak((const uint8_t *)binseed, len, (uint8_t *)state, sizeof(state));
+	keccak((const uint8_t *)seed, len, (uint8_t *)state, sizeof(state));
 	sfmt_init_by_array(&sfmt_state, (uint32_t *)state, sizeof(state)/sizeof(uint32_t));
 }
 

@@ -44,21 +44,21 @@
 /*
  *
  */
-#define DEFINE_GETTER_SETTER_BOOL(f) \
-	DEFINE_GETTER_SETTER(bool, false, f)
+#define DEFINE_GETTER_SETTER_BOOL(f, val) \
+	DEFINE_GETTER_SETTER(bool, val, f)
 
-#define DEFINE_GETTER_SETTER_INT(f) \
-	DEFINE_GETTER_SETTER(int, 0, f)
+#define DEFINE_GETTER_SETTER_INT(f, val) \
+	DEFINE_GETTER_SETTER(int, val, f)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-DEFINE_GETTER_SETTER_BOOL(compute_hash)
-DEFINE_GETTER_SETTER_BOOL(print_hash)
-DEFINE_GETTER_SETTER_BOOL(depth_protect)
-DEFINE_GETTER_SETTER_INT (max_funcs)
-DEFINE_GETTER_SETTER_INT (max_stmt_depth)
-DEFINE_GETTER_SETTER_BOOL(wrap_volatiles)
-DEFINE_GETTER_SETTER_BOOL(allow_const_volatile)
+DEFINE_GETTER_SETTER_BOOL(compute_hash, true)
+DEFINE_GETTER_SETTER_BOOL(print_hash, true)
+DEFINE_GETTER_SETTER_BOOL(depth_protect, true)
+DEFINE_GETTER_SETTER_INT (max_funcs, CGOPTIONS_DEFAULT_MAX_FUNCS)
+DEFINE_GETTER_SETTER_INT (max_stmt_depth, CGOPTIONS_DEFAULT_MAX_STMT_DEPTH)
+DEFINE_GETTER_SETTER_BOOL(wrap_volatiles, false)
+DEFINE_GETTER_SETTER_BOOL(allow_const_volatile, false)
 
 ///////////////////////////////////////////////////////////////////////////////
 

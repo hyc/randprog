@@ -78,6 +78,8 @@ FUTURE:
 #include <ostream>
 #include <sstream>
 
+#include <string.h>
+
 #include "Common.h"
 
 #include "Block.h"
@@ -161,6 +163,29 @@ OutputMain(ostream &out)
 	}
 }
 
+static int hex2bin( char *in, char *out0, int len )
+{
+	int i;
+	char *out = out0;
+	for (i=0; i<len; i+=2) {
+		char nyb1, nyb2;
+		nyb1 = *in++;
+		nyb2 = *in++;
+		nyb1 &= ~0x20;
+		nyb2 &= ~0x20;
+		if (nyb1 & 0x40)
+			nyb1 -= 55;
+		else
+			nyb1 &= 0x0f;
+		if (nyb2 & 0x40)
+			nyb2 -= 55;
+		else
+			nyb2 &= 0x0f;
+		*out++ = nyb1 << 4 | nyb2;
+	}
+	return out - out0;
+}
+
 extern void RunJS(ostream &out, string src);
 
 // ----------------------------------------------------------------------------
@@ -169,13 +194,12 @@ main(int argc, char **argv)
 {
 	if (argc == 2)
 		g_Seed = argv[1];
-	seedrand(g_Seed);
-
-	CGOptions::compute_hash(true);
-	CGOptions::print_hash(true);
-	CGOptions::depth_protect(true);
-	CGOptions::max_funcs(CGOPTIONS_DEFAULT_MAX_FUNCS);
-	CGOptions::max_stmt_depth(CGOPTIONS_DEFAULT_MAX_STMT_DEPTH);
+	{
+		int len = strlen(g_Seed);
+		char *s2 = (char *)alloca(len/2);
+		len = hex2bin(g_Seed, s2, len);
+		seedrand(s2, len);
+	}
 
 	if (CGOptions::print_hash()) {
 		CGOptions::compute_hash(true);
