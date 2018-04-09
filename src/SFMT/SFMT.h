@@ -64,6 +64,10 @@ extern "C" {
   #endif
 #endif
 
+#ifndef SFMT_MEXP
+#define SFMT_MEXP	19937
+#endif
+
 #include "SFMT-params.h"
 
 /*------------------------------------------

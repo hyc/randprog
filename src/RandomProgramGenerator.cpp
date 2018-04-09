@@ -91,7 +91,6 @@ FUTURE:
 #include "Type.h"
 #include "Variable.h"
 
-#include "platform.h"
 #include "random.h"
 
 using namespace std;
@@ -113,7 +112,6 @@ OutputHeader(ostream &out, int argc, char *argv[])
 	out << "/*" << endl;
 	out << " * This is a RANDOMLY GENERATED PROGRAM." << endl;
 	out << " *" << endl;
-	out << " * Generator: " << PACKAGE_STRING << endl;
 	out << " * Options:  ";
 	if (argc <= 1) {
 		out << " (none)";

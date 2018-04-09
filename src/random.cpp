@@ -34,7 +34,6 @@
 
 #include "random.h"
 
-#define SFMT_MEXP	19937
 #include "SFMT/SFMT.h"
 
 #include "crypto/c_keccak.h"
