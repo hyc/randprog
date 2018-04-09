@@ -92,6 +92,7 @@ FUTURE:
 #include "Variable.h"
 
 #include "random.h"
+#include "Hash.h"
 
 using namespace std;
 
@@ -158,10 +159,9 @@ OutputMain(ostream &out)
 	if (CGOptions::compute_hash()) {
 		HashGlobalVariables(out);
 	}
-	if (CGOptions::print_hash()) {
-		out << "    printf(\"%d\\n\", context);" << endl;
-	}
 }
+
+extern void RunJS(ostream &out, string src);
 
 // ----------------------------------------------------------------------------
 int
@@ -208,8 +208,20 @@ main(int argc, char **argv)
 	OutputGlobalVariables(out);
 	OutputFunctions(out);
 	OutputMain(out);
+//	cout << outbuf.str();
+	RunJS(out, outbuf.str());
 	cout << outbuf.str();
-	
+	HashOut HashResult;
+	Hash(outbuf.str().c_str(), outbuf.str().size(), HashResult);
+	cout << "Hash Result: ";
+	cout << std::hex;
+	for (int i=0; i<sizeof(HashResult); i++) {
+		cout << (int)HashResult[i];
+	}
+	cout << endl;
+		
+
+
 //	file.close();
 	return 0;
 }

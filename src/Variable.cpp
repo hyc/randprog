@@ -532,7 +532,7 @@ static void
 HashVariable(Variable *var, std::ostream *pOut)
 {
 	std::ostream &out = *pOut;
-	out << "crcBytes(";
+	out << "print(";
 	var->Output(out);
 	out << ");" << endl;
 }
