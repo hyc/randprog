@@ -20,3 +20,5 @@ can be retrieved using:
 
 WALLET_ADDRESS="a valid Monero wallet address"
 curl -X POST http://node.moneroworld.com:18089/json_rpc -d "{\"method\": \"getblocktemplate\", \"params\": {\"reserve_size\": 8, \"wallet_address\": \"$WALLET_ADDRESS\"}}"
+
+Use the blockhashing_blob as the hexadecimal string for the seed.
