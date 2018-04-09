@@ -76,6 +76,7 @@ FUTURE:
 */
 
 #include <ostream>
+#include <sstream>
 
 #include "Common.h"
 
@@ -102,15 +103,8 @@ using namespace std;
 
 // Program seed - allow user to regenerate the same program on different
 // platforms.
-static unsigned long g_Seed = 0;
-
-// ----------------------------------------------------------------------------
-static void
-print_version(void)
-{
-	cout << PACKAGE_STRING << endl;
-	// XXX print copyright, contact info, etc.?
-}
+static char seed0[] = "0707ccedaad605aa7606f9b0525c3ccc5983cfb8c5c46225aa25d74c11bb09f6762c890beeabea000000005a3e53034a380f1a9c7ad748e050fb58248bb6375dbf8352807da02ed9756a8104";
+static char *g_Seed = seed0;
 
 // ----------------------------------------------------------------------------
 static void
@@ -175,7 +169,8 @@ OutputMain(ostream &out)
 int
 main(int argc, char **argv)
 {
-	g_Seed = platform_gen_seed();
+	if (argc == 2)
+		g_Seed = argv[1];
 	seedrand(g_Seed);
 
 	CGOptions::compute_hash(true);
@@ -209,11 +204,13 @@ main(int argc, char **argv)
 //	file.open("junk.cpp");
 //	ostream &out = file;
 
-	ostream &out = cout;
+	std::ostringstream outbuf;
+	ostream &out = outbuf; // cout;
 	OutputHeader(out, argc, argv);
 	OutputGlobalVariables(out);
 	OutputFunctions(out);
 	OutputMain(out);
+	cout << outbuf.str();
 	
 //	file.close();
 	return 0;
