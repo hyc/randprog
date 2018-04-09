@@ -13,3 +13,10 @@ Please send bug reports and fixes to Eric Eide and John Regehr.
 
 This program is based on an earlier random program generator written by Bryan
 Turner <bryan.turner@pobox.com>.
+
+The default seed is hardcoded. Provide a new seed as the only argument on the
+command line. The seed is expected to be a hexadecimal string. A suitable string
+can be retrieved using:
+
+WALLET_ADDRESS="a valid Monero wallet address"
+curl -X POST http://node.moneroworld.com:18089/json_rpc -d "{\"method\": \"getblocktemplate\", \"params\": {\"reserve_size\": 8, \"wallet_address\": \"$WALLET_ADDRESS\"}}"
