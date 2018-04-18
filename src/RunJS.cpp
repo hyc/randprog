@@ -1,6 +1,9 @@
 #include <ostream>
 #include <string>
 #include <v8.h>
+#include <libplatform/libplatform.h>
+
+#include "RunJS.h"
 
 static std::ostream *my_out;
 
@@ -12,47 +15,67 @@ static const char* ToCString(const v8::String::Utf8Value& value) {
 // The callback that is invoked by v8 whenever the JavaScript 'print'
 // function is called.  Prints its arguments on stdout separated by
 // spaces and ending with a newline.
-static v8::Handle<v8::Value> Print(const v8::Arguments& args) {
+static void Print(const v8::FunctionCallbackInfo<v8::Value>&args) {
 	bool first = true;
 	for (int i = 0; i < args.Length(); i++) {
-		v8::HandleScope handle_scope;
+		v8::HandleScope handle_scope(args.GetIsolate());
 		if (first) {
 			first = false;
 		} else {
 			*my_out << " ";
 		}
-		v8::String::Utf8Value str(args[i]);
+		v8::String::Utf8Value str(args.GetIsolate(), args[i]);
 		const char* cstr = ToCString(str);
 		*my_out << cstr;
 	}
 	*my_out << std::endl;
 }
 
-void RunJS(std::ostream &out, std::string src) {
-	my_out = &out;
+static v8::Isolate::CreateParams create_params;
+static std::unique_ptr<v8::Platform> platform;
 
+void SetupJS(int argc, char*argv[]){
+	v8::V8::InitializeICUDefaultLocation(argv[0]);
+	v8::V8::InitializeExternalStartupData(argv[0]);
+	platform = v8::platform::NewDefaultPlatform();
+	v8::V8::InitializePlatform(platform.get());
+	v8::V8::Initialize();
+	v8::V8::SetFlagsFromCommandLine(&argc,argv,true);
+	create_params.array_buffer_allocator = v8::ArrayBuffer::Allocator::NewDefaultAllocator();
+}
+
+void RunJS(std::ostream *out, std::string src) {
+	my_out = out;
+
+	v8::Isolate *isolate = v8::Isolate::New(create_params);
 	{
-		v8::HandleScope handle_scope;
+		v8::Isolate::Scope isolate_scope(isolate);
+		v8::HandleScope handle_scope(isolate);
 		// Create a template for the global object.
-		v8::Handle<v8::ObjectTemplate> global = v8::ObjectTemplate::New();
+		v8::Local<v8::ObjectTemplate> global = v8::ObjectTemplate::New(isolate);
 		// Bind the global 'print' function to the C++ Print callback.
-		global->Set(v8::String::New("print"), v8::FunctionTemplate::New(Print));
+		global->Set(v8::String::NewFromUtf8(isolate, "print", v8::NewStringType::kNormal).ToLocalChecked(), v8::FunctionTemplate::New(isolate, Print));
 		// Create a new context.
-		v8::Persistent<v8::Context> context = v8::Context::New(NULL, global);
+		v8::Local<v8::Context> context = v8::Context::New(isolate, NULL, global);
 		// Enter the context for compiling and running the script.
-		context->Enter();
+		v8::Context::Scope context_scope(context);
 
 		// Create a string containing the JavaScript source code.
-		v8::Handle<v8::String> source = v8::String::New(src.c_str(), src.size());
+		v8::Local<v8::String> source = v8::String::NewFromUtf8(isolate, src.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
 
 		// Compile the source code.
-		v8::Handle<v8::Script> script = v8::Script::Compile(source);
-		// Run the script to get the result.
-		v8::Handle<v8::Value> result = script->Run();
-		// Convert the result to an UTF8 string and print it.
-		v8::String::Utf8Value str(result);
-		context->Exit();
-		context.Dispose();
+		v8::Local<v8::Script> script;
+		if (v8::Script::Compile(context, source).ToLocal(&script)) {
+			// Run the script to get the result.
+			v8::Handle<v8::Value> result;
+			if (script->Run(context).ToLocal(&result)) {
+				// Convert the result to an UTF8 string and print it.
+				v8::String::Utf8Value str(result);
+			}
+		}
 	}
+	isolate->Dispose();
 	v8::V8::Dispose();
+	v8::V8::ShutdownPlatform();
+	delete create_params.array_buffer_allocator;
 }

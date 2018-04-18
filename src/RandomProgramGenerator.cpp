@@ -96,6 +96,8 @@ FUTURE:
 #include "random.h"
 #include "Hash.h"
 
+#include "RunJS.h"
+
 using namespace std;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -161,6 +163,7 @@ OutputMain(ostream &out)
 	if (CGOptions::compute_hash()) {
 		HashGlobalVariables(out);
 	}
+//	delete invoke;
 }
 
 static int hex2bin( char *in, char *out0, int len )
@@ -185,8 +188,6 @@ static int hex2bin( char *in, char *out0, int len )
 	}
 	return out - out0;
 }
-
-extern void RunJS(ostream &out, string src);
 
 // ----------------------------------------------------------------------------
 int
@@ -215,6 +216,8 @@ main(int argc, char **argv)
 		return 1;
 	}
 
+	SetupJS(argc, argv);
+
 	////
 
 	// Create a list of types that will be used by this program
@@ -233,7 +236,7 @@ main(int argc, char **argv)
 	OutputFunctions(out);
 	OutputMain(out);
 //	cout << outbuf.str();
-	RunJS(out, outbuf.str());
+	RunJS(&out, outbuf.str());
 	cout << outbuf.str();
 	HashOut HashResult;
 	Hash(outbuf.str().c_str(), outbuf.str().size(), HashResult);
