@@ -449,7 +449,11 @@ Variable::is_global(void) const
 void
 Variable::OutputDef(std::ostream &out) const
 {
-	out << "var " << name << " = ";
+	if (isConst)
+		out << "const ";
+	else
+		out << "var ";
+	out << name << " = ";
 	init->Output(out);
 	out << ";" << endl;
 }
