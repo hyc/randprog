@@ -5,8 +5,6 @@
 
 #include "RunJS.h"
 
-static std::ostream *my_out;
-
 // Extracts a C string from a V8 Utf8Value.
 static const char* ToCString(const v8::String::Utf8Value& value) {
 	return *value ? *value : "<string conversion failed>";
@@ -16,6 +14,8 @@ static const char* ToCString(const v8::String::Utf8Value& value) {
 // function is called.  Prints its arguments on stdout separated by
 // spaces and ending with a newline.
 static void Print(const v8::FunctionCallbackInfo<v8::Value>&args) {
+	v8::Local<v8::External> ext = v8::Local<v8::External>::Cast(args.Data());
+	std::ostream *my_out = (std::ostream *)ext->Value();
 	bool first = true;
 	for (int i = 0; i < args.Length(); i++) {
 		v8::HandleScope handle_scope(args.GetIsolate());
@@ -33,8 +33,9 @@ static void Print(const v8::FunctionCallbackInfo<v8::Value>&args) {
 
 static v8::Isolate::CreateParams create_params;
 static std::unique_ptr<v8::Platform> platform;
+static v8::Isolate *isolate;
 
-void SetupJS(int argc, char*argv[]){
+void InitJS(int argc, char*argv[]){
 	v8::V8::InitializeICUDefaultLocation(argv[0]);
 	v8::V8::InitializeExternalStartupData(argv[0]);
 	platform = v8::platform::NewDefaultPlatform();
@@ -42,19 +43,17 @@ void SetupJS(int argc, char*argv[]){
 	v8::V8::Initialize();
 	v8::V8::SetFlagsFromCommandLine(&argc,argv,true);
 	create_params.array_buffer_allocator = v8::ArrayBuffer::Allocator::NewDefaultAllocator();
+	isolate = v8::Isolate::New(create_params);
 }
 
 void RunJS(std::ostream *out, std::string src) {
-	my_out = out;
-
-	v8::Isolate *isolate = v8::Isolate::New(create_params);
 	{
 		v8::Isolate::Scope isolate_scope(isolate);
 		v8::HandleScope handle_scope(isolate);
 		// Create a template for the global object.
 		v8::Local<v8::ObjectTemplate> global = v8::ObjectTemplate::New(isolate);
 		// Bind the global 'print' function to the C++ Print callback.
-		global->Set(v8::String::NewFromUtf8(isolate, "print", v8::NewStringType::kNormal).ToLocalChecked(), v8::FunctionTemplate::New(isolate, Print));
+		global->Set(v8::String::NewFromUtf8(isolate, "print", v8::NewStringType::kNormal).ToLocalChecked(), v8::FunctionTemplate::New(isolate, Print, v8::External::New(isolate, out)));
 		// Create a new context.
 		v8::Local<v8::Context> context = v8::Context::New(isolate, NULL, global);
 		// Enter the context for compiling and running the script.
@@ -74,6 +73,9 @@ void RunJS(std::ostream *out, std::string src) {
 			}
 		}
 	}
+}
+
+void FiniJS() {
 	isolate->Dispose();
 	v8::V8::Dispose();
 	v8::V8::ShutdownPlatform();

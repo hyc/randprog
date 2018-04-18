@@ -216,7 +216,7 @@ main(int argc, char **argv)
 		return 1;
 	}
 
-	SetupJS(argc, argv);
+	InitJS(argc, argv);
 
 	////
 
@@ -246,7 +246,7 @@ main(int argc, char **argv)
 		cout << (int)HashResult[i];
 	}
 	cout << endl;
-		
+	FiniJS();
 
 
 //	file.close();
