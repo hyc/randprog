@@ -41,6 +41,6 @@ union hash_state {
 void Hash(const char *data, size_t len, HashOut output)
 {
 	union hash_state hs;
-	keccak(data, len, hs.b, sizeof(state));
+	keccak(data, len, hs.b, sizeof(hs));
 	extra_hashes[hs.b[0] & 3](hs.b, 200, output);
 }

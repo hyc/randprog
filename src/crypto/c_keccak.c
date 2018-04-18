@@ -4,6 +4,7 @@
 
 // #include "hash-ops.h"
 #include "c_keccak.h"
+#define HASH_DATA_AREA	136
 
 const uint64_t keccakf_rndc[24] = 
 {
@@ -142,7 +143,7 @@ typedef uint64_t state_t[25];
 
 int keccak(const uint8_t *in, int inlen, uint8_t *md, int mdlen)
 {
-    /*state_t st;
+    state_t st;
     uint8_t temp[144];
     int i, rsiz, rsizw;
 
@@ -170,19 +171,7 @@ int keccak(const uint8_t *in, int inlen, uint8_t *md, int mdlen)
 
     memcpy(md, st, mdlen);
 
-    return 0;*/
-    
-	uint64_t st[25];
-	
-	memcpy(st, in, 76);
-	memset(&st[10], 0x00, 120);
-	st[9] = (st[9] & 0x00000000FFFFFFFFULL) | 0x0000000100000000ULL;
-	st[16] = 0x8000000000000000ULL;
-	
-	keccakf(st, 24);
-	
-	memcpy(md, st, 200);
-	return(0);
+    return 0;
 }
 
 void keccak1600(const uint8_t *in, int inlen, uint8_t *md)
