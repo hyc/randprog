@@ -240,10 +240,11 @@ main(int argc, char **argv)
 	cout << outbuf.str();
 	HashOut HashResult;
 	Hash(outbuf.str().c_str(), outbuf.str().size(), HashResult);
+	const char hex[] = "0123456789abcdef";
 	cout << "Hash Result: ";
-	cout << std::hex;
 	for (int i=0; i<sizeof(HashResult); i++) {
-		cout << (int)HashResult[i];
+		cout << hex[HashResult[i] >> 4];
+		cout << hex[HashResult[i] & 15];
 	}
 	cout << endl;
 	FiniJS();
