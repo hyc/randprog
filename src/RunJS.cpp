@@ -33,7 +33,6 @@ static void Print(const v8::FunctionCallbackInfo<v8::Value>&args) {
 
 static v8::Isolate::CreateParams create_params;
 static std::unique_ptr<v8::Platform> platform;
-static v8::Isolate *isolate;
 
 void InitJS(int argc, char*argv[]){
 	v8::V8::InitializeICUDefaultLocation(argv[0]);
@@ -43,10 +42,10 @@ void InitJS(int argc, char*argv[]){
 	v8::V8::Initialize();
 	v8::V8::SetFlagsFromCommandLine(&argc,argv,true);
 	create_params.array_buffer_allocator = v8::ArrayBuffer::Allocator::NewDefaultAllocator();
-	isolate = v8::Isolate::New(create_params);
 }
 
 void RunJS(std::ostream *out, std::string src) {
+	v8::Isolate *isolate= v8::Isolate::New(create_params);
 	{
 		v8::Isolate::Scope isolate_scope(isolate);
 		v8::HandleScope handle_scope(isolate);
@@ -73,11 +72,12 @@ void RunJS(std::ostream *out, std::string src) {
 			}
 		}
 	}
+	isolate->Dispose();
 }
 
 void FiniJS() {
-	isolate->Dispose();
 	v8::V8::Dispose();
 	v8::V8::ShutdownPlatform();
 	delete create_params.array_buffer_allocator;
+	platform.reset();
 }
