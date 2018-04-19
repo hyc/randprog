@@ -299,14 +299,7 @@ Function::Output(std::ostream &out)
 	out << "{" << endl;
 
 	if (CGOptions::depth_protect()) {
-		out << "if (DEPTH < MAX_DEPTH) " << endl;
-	}
-
-	body->Output(out);
-
-	if (CGOptions::depth_protect()) {
-		out << "else" << endl;
-
+		out << "if (DEPTH >= MAX_DEPTH) " << endl;
 		// TODO: Needs to be fixed when return types are no longer simple
 		// types.
 
@@ -315,10 +308,17 @@ Function::Output(std::ostream &out)
 		CGContext tmp(this, 0, 0, ec, &ea);
 		Constant *c = Constant::make_random(tmp, return_type.simple_type);
 
-		out << "return ";
+		out << "    return ";
 		c->Output(out);
 		delete c;
 		out << ";" << endl;
+		out << "DEPTH++;" << endl;
+	}
+
+	body->Output(out);
+
+	if (CGOptions::depth_protect()) {
+		out << "DEPTH--;" << endl;
 	}
 
 	out << "}" << endl;

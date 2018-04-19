@@ -160,17 +160,9 @@ Block::Output(std::ostream &out) const
 {
 	out << "{" << endl;
 	
-	if (CGOptions::depth_protect()) {
-		out << "DEPTH++;" << endl;
-	}
-
 	OutputVariableList(local_vars, out);
 	OutputStatementList(stm, out);
 	
-	if (CGOptions::depth_protect()) {
-		out << "DEPTH--;" << endl;
-	}
-
 	out << "}" << endl;
 }
 
