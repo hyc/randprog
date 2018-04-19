@@ -92,6 +92,8 @@ public:
 	// bool isExtern;
 	const bool isStatic;
 	const bool isRegister;
+	// control variable for a loop.
+	bool isLooper;
 };
 
 // Factories.

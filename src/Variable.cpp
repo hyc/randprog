@@ -401,7 +401,7 @@ Variable::Variable(const std::string &name, const Type *type,
 	: name(name), type(type),
 	  init(0),
 	  isConst(isConst), isVolatile(isVolatile),
-	  isAuto(isAuto), isStatic(isStatic), isRegister(isRegister)
+	  isAuto(isAuto), isStatic(isStatic), isRegister(isRegister), isLooper(false)
 {
 	// XXX caller should generate the init expr more cleverly/explicitly
 	CGContext cg_context(0, 0, 0, Effect::get_empty_effect(), 0);
@@ -415,7 +415,7 @@ Variable::Variable(const std::string &name, const Type *type)
 	: name(name), type(type),
 	  init(0),
 	  isConst(false), isVolatile(false),
-	  isAuto(false), isStatic(false), isRegister(false)
+	  isAuto(false), isStatic(false), isRegister(false), isLooper(false)
 {
 	// XXX caller should generate the init expr more cleverly/explicitly
 	CGContext cg_context(0, 0, 0, Effect::get_empty_effect(), 0);

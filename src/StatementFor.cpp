@@ -59,18 +59,34 @@ make_random_loop_control(int &init, int &limit, int &incr,
 {
 	init  = rnd_flipcoin(50) ? 0 : (rnd_upto(60)-30);
 	limit = rnd_flipcoin(50) ? 0 : (rnd_upto(60)-30);
+	int pos;
 
-	eBinaryOps t_ops[] = { eCmpLt, eCmpLe, eCmpGt, eCmpGe, eCmpEq, eCmpNe };
-	test_op = t_ops[rnd_upto(sizeof(t_ops)/sizeof(*t_ops))];
+	/* make sure limit is different from init */
+	while (limit == init)
+		limit = rnd_upto(60)-30;
+
+	/* make sure loop will terminate */
+	if (limit > init) {
+		eBinaryOps t_ops[] = { eCmpLt, eCmpLe, eCmpNe };
+		test_op = t_ops[rnd_upto(sizeof(t_ops)/sizeof(*t_ops))];
+		pos = 1;
+	} else {
+		eBinaryOps t_ops[] = { eCmpGt, eCmpGe, eCmpNe };
+		test_op = t_ops[rnd_upto(sizeof(t_ops)/sizeof(*t_ops))];
+		pos = 0;
+	}
 
 	if (rnd_flipcoin(50)) {
-		// Do `+=' or `-=' by an increment between 0 and 9 inclusive.
-		incr_op = rnd_flipcoin(50) ? eAddAssign : eSubAssign;
-		incr = rnd_upto(10);
+		// Do `+=' or `-=' by an increment between 1 and 9 inclusive.
+		incr_op = pos ? eAddAssign : eSubAssign;
+		incr = rnd_upto(9)+1;
+		// Don't use != if we could incr past it.
+		if (test_op == eCmpNe)
+			test_op = pos ? eCmpLe : eCmpGe;
 	} else {
 		// Do `++' or `--', pre- or post-.
-		eAssignOps i_ops[] = { ePreIncr, ePreDecr, ePostIncr, ePostDecr };
-		incr_op = i_ops[rnd_upto(sizeof(i_ops)/sizeof(*i_ops))];
+		eAssignOps i_ops[] = { ePreDecr, ePostDecr, ePreIncr, ePostIncr };
+		incr_op = i_ops[rnd_upto(2)+pos*2];
 		incr = 1;
 	}
 }
@@ -87,10 +103,13 @@ StatementFor::make_random(CGContext &cg_context)
 	assert(curr_func);
 
 	// Select the loop control variable.
-	Variable *var = SelectLValue(*curr_func, cg_context.get_effect_context());
+	Variable *var;
+	do { var = SelectLValue(*curr_func, cg_context.get_effect_context()); }
+	while (var->isLooper || var->is_global());
 
 	cg_context.write_var(var);
 	cg_context.read_var(var);
+	var->isLooper = true;
 
 	// Select the loop parameters: init, limit, increment, etc.
 	int        init_n, limit_n, incr_n;
@@ -118,6 +137,7 @@ StatementFor::make_random(CGContext &cg_context)
 	Block *body =
 			Block::make_random(cg_context);
 	cg_context.flags = flags_save;
+	var->isLooper = false;
 
 	return new StatementFor(*init, *test, *incr, *body);
 }
