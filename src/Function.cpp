@@ -164,14 +164,12 @@ SelectFunction(Function *curFunc, bool &isBackLink,
 		}
 		int i;
 		Function *f;
-#if 0
 		for (f = curFunc, i=0; f; f = f->parent, i++) {
 			if (f == callee)
 				return 0;
-			if (i > CGOptions::max_stmt_depth())
+			if (i > CGOptions::max_call_depth())
 				return 0;
 		}
-#endif
 		// unsigned long idx = rnd_upto(FuncList.size());
 		// isBackLink = (idx <= cur_func_idx);
 		isBackLink = true; // XXX

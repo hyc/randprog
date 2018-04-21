@@ -39,6 +39,7 @@
  */
 #define CGOPTIONS_DEFAULT_MAX_FUNCS			(20)
 #define CGOPTIONS_DEFAULT_MAX_STMT_DEPTH	(8)
+#define CGOPTIONS_DEFAULT_MAX_CALL_DEPTH	(5)
 
 /*
  *
@@ -60,6 +61,9 @@ public:
 	static int max_stmt_depth(void);
 	static int max_stmt_depth(int p);
 
+	static int max_call_depth(void);
+	static int max_call_depth(int p);
+
 	static bool wrap_volatiles(void);
 	static bool wrap_volatiles(bool p);
 
@@ -73,6 +77,7 @@ private:
 	static bool	depth_protect_;
 	static int	max_funcs_;
 	static int	max_stmt_depth_;
+	static int	max_call_depth_;
 	static bool	wrap_volatiles_;
 	static bool	allow_const_volatile_;
 

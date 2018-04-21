@@ -141,7 +141,7 @@ OutputHeader(ostream &out, int argc, char *argv[])
 	out << endl;
 
 	if (CGOptions::depth_protect()) {
-		out << "const MAX_DEPTH = 5;" << endl;
+		out << "const MAX_DEPTH = " << CGOptions::max_call_depth() << ";" << endl;
 		out << "var DEPTH = 0;" << endl;
 		out << endl;
 	}
