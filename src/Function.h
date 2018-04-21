@@ -56,7 +56,7 @@ public:
 
 	// Factory methods.
 	static Function *make_first(void);
-	static Function *make_random(Function &, const Effect &effect_context);
+	static Function *make_random(Function *, const Effect &effect_context);
 
 	void Output(std::ostream &);
 	void OutputForwardDecl(std::ostream &);
@@ -75,6 +75,7 @@ public:
 	
 	pool_vector<Block*> stack;
 	Block *body;
+	Function *parent;
 	
 private:
 	Function(const pool_string &name, const Type &return_type);
@@ -88,7 +89,7 @@ private:
 
 void GenerateFunctions(void);
 Function *GetFirstFunction(void);
-Function *SelectFunction(Function &curFunc,
+Function *SelectFunction(Function *curFunc,
 						 bool &isBackLink, const Effect &effect_context);
 
 void FunctionReset(void);

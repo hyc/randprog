@@ -145,7 +145,7 @@ choose_func(pool_vector<Function *> funcs,
  * WARNING: this function may return null!
  */
 Function *
-SelectFunction(Function &curFunc, bool &isBackLink,
+SelectFunction(Function *curFunc, bool &isBackLink,
 			   const Effect &effect_context)
 {
 	// Select between creating a new function, or calling an old function.
@@ -162,9 +162,20 @@ SelectFunction(Function &curFunc, bool &isBackLink,
 			// TODO: Maybe should generate a new function?
 			return 0;
 		}
+		int i;
+		Function *f;
+#if 0
+		for (f = curFunc, i=0; f; f = f->parent, i++) {
+			if (f == callee)
+				return 0;
+			if (i > CGOptions::max_stmt_depth())
+				return 0;
+		}
+#endif
 		// unsigned long idx = rnd_upto(FuncList.size());
 		// isBackLink = (idx <= cur_func_idx);
 		isBackLink = true; // XXX
+		callee->parent = curFunc;
 		return callee;
 	}
 }
@@ -185,9 +196,9 @@ ParamListProbability(pool_vector<Variable*> &List)
  *
  */
 static void
-GenerateParameterList(Function &curFunc, Function &parent)
+GenerateParameterList(Function *curFunc, Function *parent)
 {
-	while (ParamListProbability(curFunc.param)) {
+	while (ParamListProbability(curFunc->param)) {
 		// With some probability, choose a new random variable, or one from
 		// parentParams, parentLocals, or the globals list.
 		//
@@ -214,12 +225,13 @@ Function::Function(const pool_string &name, const Type &return_type)
  *
  */
 Function *
-Function::make_random(Function &parent, const Effect& effect_context)
+Function::make_random(Function *parent, const Effect& effect_context)
 {
 	Function *f = new Function(RandomFunctionName(), RandomReturnType());
+	f->parent = parent;
 
 	// Select a set of vars to operate on.
-	GenerateParameterList(*f, parent);
+	GenerateParameterList(f, parent);
 	f->GenerateBody(effect_context);
 
 	return f;
@@ -232,6 +244,8 @@ Function *
 Function::make_first(void)
 {
 	Function *f = new Function(RandomFunctionName(), RandomReturnType());
+
+	f->parent = NULL;
 
 	// No Parameter List
 	f->GenerateBody(Effect::get_empty_effect());

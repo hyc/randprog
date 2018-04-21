@@ -194,32 +194,32 @@ GenerateNewParentLocal(Block &block,
 //
 // TODO: fix this so we don't need an effect.
 void
-GenerateParameterVariable(Function &curFunc, Function &parent)
+GenerateParameterVariable(Function *curFunc, Function *parent)
 {
 	Variable *var = SelectVariable(parent,
 								   Effect::READ, Effect::get_empty_effect());
 
 	// Add this type to our parameter list.
 	Variable *param = new Variable(RandomParamName(), var->type);
-	curFunc.param.push_back(param);
+	curFunc->param.push_back(param);
 }
 
 // --------------------------------------------------------------
 static Variable *
-SelectParentLocal(Function &parent,
+SelectParentLocal(Function *parent,
 				  Effect::Access access,
 				  const Effect &effect_context)
 {
 	// Select from the local variables of the parent OR any of its block stack.
 
-	if (parent.stack.empty()) {
+	if (parent->stack.empty()) {
 		// We're choosing a local from a function whose body hasn't been built.
 		// This should never happen.
-		assert(!parent.stack.empty());
+		assert(!parent->stack.empty());
 		return 0;
 	}
 
-	Block *block = parent.stack[rnd_upto(parent.stack.size())];
+	Block *block = parent->stack[rnd_upto(parent->stack.size())];
 	
 	// Should be "generate new block local"...
 	if (block->local_vars.empty()) {
@@ -254,7 +254,7 @@ LValueSelectionProbability(pool_vector<Variable*> &List)
 
 // --------------------------------------------------------------
 static eVariableScope
-VariableCreationProbability(Function & /*parent*/)
+VariableCreationProbability(Function * /*parent*/)
 {
 	if (rnd_flipcoin(10))		// 10% chance to create new global var
 		return eGlobal;
@@ -264,19 +264,19 @@ VariableCreationProbability(Function & /*parent*/)
 
 // --------------------------------------------------------------
 static Variable *
-SelectParentParam(Function &parent,
+SelectParentParam(Function *parent,
 				  Effect::Access access,
 				  const Effect &effect_context)
 {
-	if (parent.param.empty())
+	if (parent->param.empty())
 		return SelectParentLocal(parent, access, effect_context);
 	// We never generate volatile params, so `effect_context' is unused below.
-	return choose_var(parent.param, access, effect_context);
+	return choose_var(parent->param, access, effect_context);
 }
 
 // --------------------------------------------------------------
 static Variable *
-GenerateNewVariable(Function &func,
+GenerateNewVariable(Function *func,
 					Effect::Access access,
 					const Effect &effect_context)
 {
@@ -287,7 +287,7 @@ GenerateNewVariable(Function &func,
 		break;
 	case eParentLocal:
 		var = GenerateNewParentLocal(
-				*(func.stack[rnd_upto(func.stack.size())]),
+				*(func->stack[rnd_upto(func->stack.size())]),
 				access,
 				effect_context);
 		break;
@@ -299,13 +299,13 @@ GenerateNewVariable(Function &func,
 
 // --------------------------------------------------------------
 Variable *
-SelectLValue(Function &func, const Effect &effect_context)
+SelectLValue(Function *func, const Effect &effect_context)
 {
 	Variable *var = 0;
 	// Note that many of the functions that select `var' can return null, if
 	// they cannot find a suitable variable.  So we loop.
 	while (!var) {
-		switch (LValueSelectionProbability(func.param)) {
+		switch (LValueSelectionProbability(func->param)) {
 		case eGlobal:
 			var = SelectGlobal(Effect::WRITE, effect_context);
 			break;
@@ -328,7 +328,7 @@ SelectLValue(Function &func, const Effect &effect_context)
 // Select or Create a new variable visible to this scope (new var may be
 // global, or local to one of the function's blocks)
 Variable *
-SelectVariable(Function &func,
+SelectVariable(Function *func,
 			   Effect::Access access,
 			   const Effect &effect_context)
 {
@@ -336,7 +336,7 @@ SelectVariable(Function &func,
 	// Note that many of the functions that select `var' can return null, if
 	// they cannot find a suitable variable.  So we loop.
 	while (!var) {
-		switch (VariableSelectionProbability(func.param)) {
+		switch (VariableSelectionProbability(func->param)) {
 		case eGlobal:
 			var = SelectGlobal(access, effect_context);
 			break;
@@ -363,7 +363,7 @@ SelectVariable(Function &func,
 
 // --------------------------------------------------------------
 Variable *
-SelectExistingVariable(Function &func,
+SelectExistingVariable(Function *func,
 					   Effect::Access access,
 					   const Effect &effect_context)
 {
@@ -371,7 +371,7 @@ SelectExistingVariable(Function &func,
 	// Note that many of the functions that select `var' can return null, if
 	// they cannot find a suitable variable.  So we loop.
 	while (!var) {
-		switch (VariableSelectionProbability(func.param)) {
+		switch (VariableSelectionProbability(func->param)) {
 		case eGlobal:
 			var = SelectGlobal(access, effect_context);
 			break;

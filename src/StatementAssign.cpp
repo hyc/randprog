@@ -50,7 +50,7 @@ StatementAssign::make_random(CGContext &cg_context)
 	assert(curr_func);
 
 	Variable *v;
-	do { v = SelectLValue(*curr_func,
+	do { v = SelectLValue(curr_func,
 							   cg_context.get_effect_context());
 	} while (v->isLooper);
 	Expression *e = Expression::make_random(cg_context);

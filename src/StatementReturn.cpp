@@ -53,7 +53,7 @@ StatementReturn::make_random(CGContext &cg_context)
 	if ((curr_func->return_type.eType != eSimple) ||
 		(curr_func->return_type.simple_type != eVoid))	{
 		// SelectVariableOfType(curFunc.return_type);
-		var = SelectVariable(*curr_func,
+		var = SelectVariable(curr_func,
 							 Effect::READ,
 							 cg_context.get_effect_context());
 		cg_context.read_var(var);

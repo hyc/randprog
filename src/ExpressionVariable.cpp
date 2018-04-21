@@ -50,7 +50,7 @@ ExpressionVariable::make_random(CGContext &cg_context)
 
 	++cg_context.stmt_depth;
 
-	Variable *v = SelectVariable(*curr_func,
+	Variable *v = SelectVariable(curr_func,
 								 Effect::READ,
 								 cg_context.get_effect_context());
 	cg_context.read_var(v);

@@ -141,7 +141,7 @@ OutputHeader(ostream &out, int argc, char *argv[])
 	out << endl;
 
 	if (CGOptions::depth_protect()) {
-		out << "const MAX_DEPTH = 10;" << endl;
+		out << "const MAX_DEPTH = 5;" << endl;
 		out << "var DEPTH = 0;" << endl;
 		out << endl;
 	}
@@ -207,6 +207,8 @@ main(int argc, char **argv)
 	seed = (char *)alloca(seedlen/2);
 	seedlen = hex2bin(g_Seed, seed, seedlen);
 
+	int *nonceptr = (int *)(seed+39);
+
 	if (CGOptions::print_hash()) {
 		CGOptions::compute_hash(true);
 	}
@@ -244,9 +246,9 @@ main(int argc, char **argv)
 	OutputGlobalVariables(out);
 	OutputFunctions(out);
 	OutputMain(out);
-//	cout << outbuf.str();
-	RunJS(&out, outbuf.str());
 	cout << outbuf.str();
+	RunJS(&out, outbuf.str());
+//	cout << outbuf.str();
 	HashOut HashResult;
 	Hash(outbuf.str().c_str(), outbuf.str().size(), HashResult);
 	const char hex[] = "0123456789abcdef";
@@ -258,7 +260,6 @@ main(int argc, char **argv)
 	cout << endl;
 
 	if (seedlen == 76) {
-		int *nonceptr = (int *)(seed+39);
 		struct timeval beg, end;
 #define ITERS	1000
 		printf("Timing %d nonces\n", ITERS);

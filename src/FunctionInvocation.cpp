@@ -97,7 +97,7 @@ FunctionInvocation::make_random(bool bStandardFunc,
 	// If we cannot find one, fall back to calling a "standard" function.
 	Function *callee = 0;
 	if (!is_std_func) {
-		callee = SelectFunction(*curr_func,
+		callee = SelectFunction(curr_func,
 								is_back_link,
 								cg_context.get_effect_context());
 		if (!callee) {

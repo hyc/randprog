@@ -98,12 +98,12 @@ public:
 Variable *SelectExistingVariable(Function &func,
 								 Effect::Access access,
 								 const Effect &effect_context);
-Variable *SelectVariable(Function &func,
+Variable *SelectVariable(Function *func,
 						 Effect::Access access,
 						 const Effect &effect_context);
-Variable *SelectLValue(Function &func,
+Variable *SelectLValue(Function *func,
 					   const Effect &effect_context);
-void GenerateParameterVariable(Function &curFunc, Function &parent);
+void GenerateParameterVariable(Function *curFunc, Function *parent);
 void OutputVariableList(const pool_vector<Variable*> &var, std::ostream &out);
 void OutputGlobalVariables(std::ostream &);
 void HashGlobalVariables(std::ostream &);

@@ -104,7 +104,7 @@ StatementFor::make_random(CGContext &cg_context)
 
 	// Select the loop control variable.
 	Variable *var;
-	do { var = SelectLValue(*curr_func, cg_context.get_effect_context()); }
+	do { var = SelectLValue(curr_func, cg_context.get_effect_context()); }
 	while (var->isLooper || var->is_global());
 
 	cg_context.write_var(var);
