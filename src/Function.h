@@ -41,9 +41,6 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#include <string>
-#include <vector>
-
 #include "Effect.h"
 #include "Type.h"
 
@@ -52,7 +49,7 @@ class Variable;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-class Function
+class Function : public pool_base
 {
 public:
 	friend void GenerateFunctions(void);
@@ -68,19 +65,19 @@ public:
 	bool is_effect_known(void) const { return (build_state == BUILT); }
 	const Effect &get_effect(void) const { return effect; }
 	
-	std::string name;
-	std::vector<Variable*> param;
+	pool_string name;
+	pool_vector<Variable*> param;
 //	vector<Expression*> param_value;
 	Type return_type;
 //	bool isBackLink;
 
 	Effect effect;
 	
-	std::vector<Block*> stack;
+	pool_vector<Block*> stack;
 	Block *body;
 	
 private:
-	Function(const std::string &name, const Type &return_type);
+	Function(const pool_string &name, const Type &return_type);
 	void OutputHeader(std::ostream &);
 	void OutputFormalParamList(std::ostream &);
 	void GenerateBody(const Effect &effect_context);

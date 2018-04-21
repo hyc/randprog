@@ -41,6 +41,8 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
+#include "Pool.h"
+
 class CGContext;
 
 enum eStatementType
@@ -65,7 +67,7 @@ enum eStatementType
 /*
  *
  */
-class Statement
+class Statement : public pool_base
 {
 public:
 	// Factory method.

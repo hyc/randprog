@@ -48,13 +48,13 @@ const Effect Effect::empty_effect;
  * algorithms.
  */
 static bool
-non_empty_intersection(const vector<const Variable *> &va,
-					   const vector<const Variable *> &vb)
+non_empty_intersection(const pool_vector<const Variable *> &va,
+					   const pool_vector<const Variable *> &vb)
 {
-	vector<const Variable *>::size_type va_len = va.size();
-	vector<const Variable *>::size_type vb_len = vb.size();
-	vector<const Variable *>::size_type i;
-	vector<const Variable *>::size_type j;
+	pool_vector<const Variable *>::size_type va_len = va.size();
+	pool_vector<const Variable *>::size_type vb_len = vb.size();
+	pool_vector<const Variable *>::size_type i;
+	pool_vector<const Variable *>::size_type j;
 	
 	for (i = 0; i < va_len; ++i) {
 		for (j = 0; j < vb_len; ++j) {
@@ -160,8 +160,8 @@ Effect::add_effect(const Effect &e)
 	// Stuff that so badly wants to be rewritten using decent STL containers
 	// and algorithms... compute the union effect.
 
-	vector<const Variable *>::size_type len;
-	vector<const Variable *>::size_type i;
+	pool_vector<const Variable *>::size_type len;
+	pool_vector<const Variable *>::size_type i;
 
 	len = e.read_vars.size();
 	for (i = 0; i < len; ++i) {
@@ -192,8 +192,8 @@ Effect::add_external_effect(const Effect &e)
 		return;
 	}
 	
-	vector<Variable *>::size_type len;
-	vector<Variable *>::size_type i;
+	pool_vector<Variable *>::size_type len;
+	pool_vector<Variable *>::size_type i;
 
 	len = e.read_vars.size();
 	for (i = 0; i < len; ++i) {
@@ -217,8 +217,8 @@ Effect::add_external_effect(const Effect &e)
 bool
 Effect::is_read(const Variable *v) const
 {
-	vector<Variable *>::size_type len = read_vars.size();
-	vector<Variable *>::size_type i;
+	pool_vector<Variable *>::size_type len = read_vars.size();
+	pool_vector<Variable *>::size_type i;
 
 	for (i = 0; i < len; ++i) {
 		if (read_vars[i] == v) {
@@ -234,8 +234,8 @@ Effect::is_read(const Variable *v) const
 bool
 Effect::is_written(const Variable *v) const
 {
-	vector<Variable *>::size_type len = write_vars.size();
-	vector<Variable *>::size_type i;
+	pool_vector<Variable *>::size_type len = write_vars.size();
+	pool_vector<Variable *>::size_type i;
 
 	for (i = 0; i < len; ++i) {
 		if (write_vars[i] == v) {
@@ -264,8 +264,8 @@ Effect::has_race_with(const Effect &e) const
 void
 Effect::Output(std::ostream &out) const
 {
-	vector<Variable *>::size_type len;
-	vector<Variable *>::size_type i;
+	pool_vector<Variable *>::size_type len;
+	pool_vector<Variable *>::size_type i;
 
 	out << "/*" << endl;
 

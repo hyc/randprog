@@ -72,7 +72,7 @@ enum eSimpleType
 /*
  *
  */
-class Type
+class Type : public pool_base
 {
 public:
 	// Pseudo-factory method.  This is `choose_random()' rather than

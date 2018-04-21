@@ -42,6 +42,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <ostream>
+#include "Pool.h"
 
 class CGContext;
 class Type;
@@ -74,7 +75,7 @@ enum eTermType
 /*
  *
  */
-class Expression
+class Expression : public pool_base
 {
 public:
 	// Factory method.

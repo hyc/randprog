@@ -60,27 +60,27 @@ using namespace std;
 // Globals.
 
 // All globals, including volatiles.
-static vector<Variable*> GlobalList;
+static thread_local pool_vector<Variable*> GlobalList;
 
 // All the non-volatile globals.
-static vector<Variable*> GlobalNonvolatilesList;
+static thread_local pool_vector<Variable*> GlobalNonvolatilesList;
 
 // --------------------------------------------------------------
-static string
+static pool_string
 RandomGlobalName(void)
 {
 	return gensym("g_");
 }
 
 // --------------------------------------------------------------
-static string
+static pool_string
 RandomLocalName(void)
 {
 	return gensym("l_");
 }
 
 // --------------------------------------------------------------
-static string
+static pool_string
 RandomParamName(void)
 {
 	return gensym("p_");
@@ -92,12 +92,12 @@ RandomParamName(void)
  * Return null if no suitable variable can be found.
  */
 static Variable *
-choose_var(vector<Variable *> vars,
+choose_var(pool_vector<Variable *> vars,
 		   Effect::Access access,
 		   const Effect &effect_context)
 {
-	vector<Variable *> ok_vars;
-	vector<Variable *>::iterator i;
+	pool_vector<Variable *> ok_vars;
+	pool_vector<Variable *>::iterator i;
 
 	for (i = vars.begin(); i != vars.end(); ++i) {
 		// We cannot read or write a volatile if the current context already
@@ -125,7 +125,7 @@ choose_var(vector<Variable *> vars,
 		ok_vars.push_back(*i);
 	}
 
-	vector<Variable *>::size_type ok_size = ok_vars.size();
+	pool_vector<Variable *>::size_type ok_size = ok_vars.size();
 
 	if (ok_size == 0) {
 		return 0;
@@ -231,7 +231,7 @@ SelectParentLocal(Function &parent,
 
 // --------------------------------------------------------------
 static eVariableScope
-VariableSelectionProbability(vector<Variable*> & /*List*/)
+VariableSelectionProbability(pool_vector<Variable*> & /*List*/)
 {
 	// Should probably modify choice based on current list of params, parent
 	// params, parent locals, # of globals, etc.
@@ -242,7 +242,7 @@ VariableSelectionProbability(vector<Variable*> & /*List*/)
 
 // --------------------------------------------------------------
 static eVariableScope
-LValueSelectionProbability(vector<Variable*> &List)
+LValueSelectionProbability(pool_vector<Variable*> &List)
 {
 	eVariableScope eType;
 	while (1) {
@@ -395,7 +395,7 @@ SelectExistingVariable(Function &func,
 /*
  *
  */
-Variable::Variable(const std::string &name, const Type *type,
+Variable::Variable(const pool_string &name, const Type *type,
 				   bool isConst, bool isVolatile,
 				   bool isAuto, bool isStatic, bool isRegister)
 	: name(name), type(type),
@@ -411,7 +411,7 @@ Variable::Variable(const std::string &name, const Type *type,
 /*
  *
  */
-Variable::Variable(const std::string &name, const Type *type)
+Variable::Variable(const pool_string &name, const Type *type)
 	: name(name), type(type),
 	  init(0),
 	  isConst(false), isVolatile(false),
@@ -435,7 +435,7 @@ bool
 Variable::is_global(void) const
 {
 	// TODO: A bit of a hack.  Variables should track their own scopes.
-	for (vector<Variable *>::iterator i = GlobalList.begin();
+	for (pool_vector<Variable *>::iterator i = GlobalList.begin();
 		 i != GlobalList.end();
 		 ++i) {
 		if ((*i) == this) {
@@ -503,7 +503,7 @@ Variable::OutputForComment(std::ostream &out) const
 
 // --------------------------------------------------------------
 static void
-MapVariableList(const vector<Variable*> &var, std::ostream &out,
+MapVariableList(const pool_vector<Variable*> &var, std::ostream &out,
 				void (*func)(Variable *var, std::ostream *pOut))
 {
 	for_each(var.begin(), var.end(), std::bind2nd(std::ptr_fun(func), &out));
@@ -518,7 +518,7 @@ OutputVariable(Variable *var, std::ostream *pOut)
 
 // --------------------------------------------------------------
 void
-OutputVariableList(const vector<Variable*> &var, std::ostream &out)
+OutputVariableList(const pool_vector<Variable*> &var, std::ostream &out)
 {
 	MapVariableList(var, out, OutputVariable);
 }

@@ -42,7 +42,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <ostream>
-#include <vector>
 
 #include "Statement.h"
 
@@ -70,8 +69,8 @@ public:
 	virtual void Output(std::ostream &out) const;
 
 	// These are currently accessed directly.
-	std::vector<Statement *> stm;
-	std::vector<Variable *> local_vars;
+	pool_vector<Statement *> stm;
+	pool_vector<Variable *> local_vars;
 
 private:
 	bool depth_protect;

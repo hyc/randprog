@@ -32,10 +32,10 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#include <string>
+#include "Pool.h"
 
-std::string gensym(const char *basename);
-std::string gensym(const std::string &basename);
+pool_string gensym(const char *basename);
+pool_string gensym(const std::string &basename);
 
 ///////////////////////////////////////////////////////////////////////////////
 

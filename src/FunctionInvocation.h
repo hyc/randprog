@@ -41,7 +41,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "vector"
+#include "Pool.h"
 
 class CGContext;
 class Function;
@@ -84,7 +84,7 @@ enum eBinaryOps
 };
 #define MAX_BINARY_OP ((eBinaryOps) (eLShift+1))
 
-class FunctionInvocation
+class FunctionInvocation : public pool_base
 {
 public:
 	static FunctionInvocation *make_random(bool,
@@ -105,7 +105,7 @@ public:
 private:	
 	eBinaryOps eFunc;
 	Function *func;
-	std::vector<Expression*> param_value;
+	pool_vector<Expression*> param_value;
 	bool isBackLink;
 	bool isStandardFunc;
 

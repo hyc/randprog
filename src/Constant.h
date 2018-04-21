@@ -33,8 +33,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <ostream>
-#include <string>
 
+#include "Pool.h"
 #include "Expression.h"
 #include "Type.h"
 
@@ -53,7 +53,7 @@ public:
 	// Factory method.
 	static Constant *make_int(int v);
 	
-	Constant(const Type &t, const std::string &v);
+	Constant(const Type &t, const pool_string &v);
 	Constant(const Constant &c);
 	virtual ~Constant(void);
 
@@ -67,7 +67,7 @@ public:
 
 private:	
 	const Type &type;
-	const std::string value;
+	const pool_string value;
 };
 
 

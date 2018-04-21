@@ -32,15 +32,14 @@
 #include <cassert>
 #include <cstdlib>
 
+#include "Pool.h"
 #include "random.h"
 
 #include "SFMT/SFMT.h"
 
 #include "crypto/c_keccak.h"
 
-using namespace std;
-
-static sfmt_t sfmt_state;
+static thread_local sfmt_t sfmt_state;
 
 void seedrand( const char *seed, int len )
 {
@@ -58,9 +57,9 @@ unsigned long genrand(void)
 static const char hex[] = "0123456789ABCDEF";
 static const char dec[] = "0123456789";
 
-string RandomHexDigits( int num )
+pool_string RandomHexDigits( int num )
 {
-	string str;
+	pool_string str;
 	while ( num-- )
 	{
 		str += hex[genrand()%16];
@@ -69,9 +68,9 @@ string RandomHexDigits( int num )
 	return str;
 }
 
-string RandomDigits( int num )
+pool_string RandomDigits( int num )
 {
-	string str;
+	pool_string str;
 	while ( num-- )
 	{
 		str += dec[genrand()%10];

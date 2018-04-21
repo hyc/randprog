@@ -43,12 +43,9 @@
 
 #include <algorithm>
 #include <functional>
-#include <vector>
-#include <string>
 #include <iostream>
 
-using std::string;
-using std::vector;
+#include "Pool.h"
 
 // ----------------------------------------------------------------
 // Forward class declarations

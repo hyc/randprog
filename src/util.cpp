@@ -31,37 +31,36 @@
 
 #include "util.h"
 
-#include <string>
 #include <sstream>
 
 using namespace std;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static int gensym_count = 0;
+static thread_local int gensym_count = 0;
 
 /*
  *
  */
-string
+pool_string
 gensym(const char* basename)
 {
 	ostringstream ss(basename, ios_base::ate);
 	
 	ss << ++gensym_count;
-	return ss.str();
+	return ss.str().c_str();
 }
 
 /*
  *
  */
-string
-gensym(const string& basename)
+pool_string
+gensym(const pool_string& basename)
 {
-	ostringstream ss(basename, ios_base::ate);
+	ostringstream ss(basename.c_str(), ios_base::ate);
 	
 	ss << ++gensym_count;
-	return ss.str();
+	return ss.str().c_str();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

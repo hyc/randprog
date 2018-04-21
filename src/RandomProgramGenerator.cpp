@@ -217,6 +217,7 @@ main(int argc, char **argv)
 	}
 
 	InitJS(argc, argv);
+	pool_init(1048576);
 
 	////
 

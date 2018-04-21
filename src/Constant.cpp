@@ -29,7 +29,6 @@
 
 #include <cassert>
 #include <ostream>
-#include <string>
 #include <iostream>
 #include <sstream>
 
@@ -52,7 +51,7 @@ using namespace std;
 /*
  * 
  */
-Constant::Constant(const Type &t, const string &v)
+Constant::Constant(const Type &t, const pool_string &v)
 	: type(t),
 	  value(v)
 {
@@ -75,33 +74,33 @@ Constant::Constant(const Constant &c)
  */
 Constant::~Constant(void)
 {
-	// Nothing else to do.
+       // Nothing else to do.
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
 // --------------------------------------------------------------
-static string
+static pool_string
 GenerateRandomBoolConstant(void)
 {
 	return rnd_flipcoin(50) ? "true" : "false";
 }
 
 // --------------------------------------------------------------
-static string
+static pool_string
 GenerateRandomIntConstant(void)
 {
 	// Int constant
-	string val = "0x" + RandomHexDigits( 8 );
+	pool_string val = "0x" + RandomHexDigits( 8 );
 	return val;
 }
 
 // --------------------------------------------------------------
-static string
+static pool_string
 GenerateRandomFloatConstant(void)
 {
 	// Generate a random floating point value with up to 10 digits of precision. (should look up precision of float/double.. 23 bits for IEEE-32?)
-	string val = RandomDigits(5) + "." + RandomDigits(5);
+	pool_string val = RandomDigits(5) + "." + RandomDigits(5);
 	if (val.c_str()[0] == '0')
 		val = "1" + val;
 	return val;
@@ -129,7 +128,7 @@ Constant::make_random(CGContext &cg_context,
 	}
 
 	const Type &t = Type::get_simple_type(eType);
-	string v;
+	pool_string v;
 
 	if ((eType != eVoid) && (eType != eBool) && rnd_flipcoin(50)) {
 		int num;
@@ -140,7 +139,7 @@ Constant::make_random(CGContext &cg_context,
 		}
 		ostringstream oss;
 		oss << num;
-		v = oss.str();
+		v = oss.str().c_str();
 	} else {
 		switch (eType) {
 		case eVoid:     v = "/* void */";						break;
@@ -176,7 +175,7 @@ Constant::make_int(int v)
 		for (int i = 0; i < cache_size; ++i) {
 			oss.str("");
 			oss << i;
-			cache_constants[i] = new Constant(int_type, oss.str());
+			cache_constants[i] = new Constant(int_type, oss.str().c_str());
 		}
 	}
 
@@ -188,7 +187,7 @@ Constant::make_int(int v)
 	// Create fresh constants for values outside of our cache limit.
 	ostringstream oss;
 	oss << v;
-	return new Constant(int_type, oss.str());
+	return new Constant(int_type, oss.str().c_str());
 }
 
 ///////////////////////////////////////////////////////////////////////////////

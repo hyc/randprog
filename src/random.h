@@ -39,8 +39,8 @@ void			seedrand(const char *seed, int len);
 unsigned long	genrand();
 
 // Old stuff.
-std::string	RandomHexDigits(int num);
-std::string	RandomDigits(int num);
+pool_string	RandomHexDigits(int num);
+pool_string	RandomDigits(int num);
 
 // New stuff.
 unsigned int	rnd_upto(unsigned int n);

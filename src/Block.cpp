@@ -146,7 +146,7 @@ OutputStatement(Statement *stm, std::ostream *pOut)
  *
  */
 static void
-OutputStatementList(const vector<Statement*> &stm, std::ostream &out)
+OutputStatementList(const pool_vector<Statement*> &stm, std::ostream &out)
 {
 	for_each(stm.begin(), stm.end(),
 			 std::bind2nd(std::ptr_fun(OutputStatement), &out));

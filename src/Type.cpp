@@ -52,7 +52,7 @@ const Type *Type::simple_types[MAX_SIMPLE_TYPES];
 
 // ---------------------------------------------------------------------
 // List of all types used in the program
-static vector<const Type *> AllTypes;
+static thread_local pool_vector<const Type *> AllTypes;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -96,18 +96,6 @@ Type::operator=(const Type& t)
 const Type &
 Type::get_simple_type(eSimpleType st)
 {
-	static bool inited = false;
-
-	if (!inited) {
-		for (int i = 0; i < MAX_SIMPLE_TYPES; ++i) {
-			Type::simple_types[i] = 0;
-		}
-		inited = true;
-	}
-	
-	if (Type::simple_types[st] == 0) {
-		Type::simple_types[st] = new Type(st);
-	}
 	return *Type::simple_types[st];
 }
 
@@ -141,6 +129,9 @@ GenerateAllTypes(void)
 {
 	while (AllTypesProbability()) {
 		AllTypes.push_back(Type::make_random());
+	}
+	for (int i = 0; i < MAX_SIMPLE_TYPES; ++i) {
+		Type::simple_types[i] = new Type((eSimpleType)i);
 	}
 }
 

@@ -29,6 +29,7 @@
 
 #include "CGContext.h"
 #include "FunctionInvocation.h"
+#include "Pool.h"
 #include "StatementExpr.h"
 
 using namespace std;

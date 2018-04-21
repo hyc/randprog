@@ -33,7 +33,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <ostream>
-#include <vector>
+#include "Pool.h"
 
 class Variable;
 
@@ -69,8 +69,8 @@ public:
 	void Output(std::ostream &out) const;
 	
 private:	
-	std::vector<const Variable *> read_vars;
-	std::vector<const Variable *> write_vars;
+	pool_vector<const Variable *> read_vars;
+	pool_vector<const Variable *> write_vars;
 
 	bool pure;
 	bool side_effect_free;

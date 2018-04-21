@@ -42,8 +42,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <ostream>
-#include <string>
-#include <vector>
 
 #include "Effect.h"
 
@@ -60,13 +58,13 @@ enum eVariableScope
 };
 #define MAX_VAR_SCOPE ((eVariableScope) (eNewValue+1))
 
-class Variable
+class Variable : public pool_base
 {
 public:
-	Variable(const std::string &name, const Type *type,
+	Variable(const pool_string &name, const Type *type,
 			 bool isConst, bool isVolatile,
 			 bool isAuto, bool isStatic, bool isRegister);
-	Variable(const std::string &name, const Type *type);
+	Variable(const pool_string &name, const Type *type);
 	~Variable(void);
 
 	bool is_global(void) const;
@@ -79,7 +77,7 @@ public:
 	void OutputForComment(std::ostream &) const;
 	void OutputDef(std::ostream &) const;
 
-	const std::string name;
+	const pool_string name;
 	const Type *type;
 	const Expression *init;
 
@@ -106,7 +104,7 @@ Variable *SelectVariable(Function &func,
 Variable *SelectLValue(Function &func,
 					   const Effect &effect_context);
 void GenerateParameterVariable(Function &curFunc, Function &parent);
-void OutputVariableList(const std::vector<Variable*> &var, std::ostream &out);
+void OutputVariableList(const pool_vector<Variable*> &var, std::ostream &out);
 void OutputGlobalVariables(std::ostream &);
 void HashGlobalVariables(std::ostream &);
 

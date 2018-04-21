@@ -55,9 +55,9 @@ using namespace std;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static vector<Function*> FuncList;		// List of all functions in the program
-static long cur_func_idx;				// Index into FuncList that we are currently working on
-static bool param_first=true;					// Flag to track output of commas
+static thread_local pool_vector<Function*> FuncList;		// List of all functions in the program
+static thread_local long cur_func_idx;				// Index into FuncList that we are currently working on
+static thread_local bool param_first=true;					// Flag to track output of commas
 
 /*
  *
@@ -81,7 +81,7 @@ GetFirstFunction(void)
 /*
  *
  */
-static string
+static pool_string
 RandomFunctionName(void)
 {
 	return gensym("func_");
@@ -103,11 +103,11 @@ RandomReturnType(void)
  * Return null if no suitable function can be found.
  */
 static Function *
-choose_func(vector<Function *> funcs,
+choose_func(pool_vector<Function *> funcs,
 			const Effect &effect_context)
 {
-	vector<Function *> ok_funcs;
-	vector<Function *>::iterator i;
+	pool_vector<Function *> ok_funcs;
+	pool_vector<Function *>::iterator i;
 
 	for (i = funcs.begin(); i != funcs.end(); ++i) {
 		// We cannot call a function that has an as-yet unknown effect.
@@ -130,7 +130,7 @@ choose_func(vector<Function *> funcs,
 		ok_funcs.push_back(*i);
 	}
 	
-	vector<Function *>::size_type ok_size = ok_funcs.size();
+	pool_vector<Function *>::size_type ok_size = ok_funcs.size();
 	
 	if (ok_size == 0) {
 		return 0;
@@ -173,7 +173,7 @@ SelectFunction(Function &curFunc, bool &isBackLink,
  *
  */
 static bool
-ParamListProbability(vector<Variable*> &List)
+ParamListProbability(pool_vector<Variable*> &List)
 {
 	if (List.empty()) {
 		return true;
@@ -201,7 +201,7 @@ GenerateParameterList(Function &curFunc, Function &parent)
 /*
  *
  */
-Function::Function(const string &name, const Type &return_type)
+Function::Function(const pool_string &name, const Type &return_type)
 	: name(name),
 	  return_type(return_type),
 	  body(0),
@@ -310,7 +310,7 @@ Function::Output(std::ostream &out)
 
 		out << "    return ";
 		c->Output(out);
-		delete c;
+//		delete c;
 		out << ";" << endl;
 		out << "DEPTH++;" << endl;
 	}

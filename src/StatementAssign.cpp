@@ -29,6 +29,7 @@
 
 #include <cassert>
 
+#include "Pool.h"
 #include "StatementAssign.h"
 
 #include "CGContext.h"
