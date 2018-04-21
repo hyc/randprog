@@ -107,6 +107,7 @@ void GenerateParameterVariable(Function &curFunc, Function &parent);
 void OutputVariableList(const pool_vector<Variable*> &var, std::ostream &out);
 void OutputGlobalVariables(std::ostream &);
 void HashGlobalVariables(std::ostream &);
+void VariableReset(void);
 
 ///////////////////////////////////////////////////////////////////////////////
 

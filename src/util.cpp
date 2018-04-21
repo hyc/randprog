@@ -63,6 +63,12 @@ gensym(const pool_string& basename)
 	return ss.str().c_str();
 }
 
+void
+symReset(void)
+{
+	gensym_count = 0;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 // Local Variables:

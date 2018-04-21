@@ -386,6 +386,16 @@ GenerateFunctions(void)
 /*
  *
  */
+void
+FunctionReset(void)
+{
+	FuncList.clear();
+	FuncList.shrink_to_fit();
+}
+
+/*
+ *
+ */
 static void
 OutputForwardDecl(Function *func, std::ostream *pOut)
 {

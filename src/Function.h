@@ -90,6 +90,8 @@ void GenerateFunctions(void);
 Function *GetFirstFunction(void);
 Function *SelectFunction(Function &curFunc,
 						 bool &isBackLink, const Effect &effect_context);
+
+void FunctionReset(void);
 // unsigned
 long FuncListSize(void);
 void OutputForwardDeclarations(std::ostream &out);

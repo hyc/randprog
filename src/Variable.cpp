@@ -548,6 +548,16 @@ HashGlobalVariables(std::ostream &out)
 	MapVariableList(GlobalList, out, HashVariable);
 }
 
+// --------------------------------------------------------------
+void
+VariableReset(void)
+{
+	GlobalList.clear();
+	GlobalList.shrink_to_fit();
+	GlobalNonvolatilesList.clear();
+	GlobalNonvolatilesList.shrink_to_fit();
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 // Local Variables:

@@ -51,8 +51,6 @@
 
 using namespace std;
 
-static thread_local pool_vector<bool> needcomma;  // Flag to track output of commas
-
 static bool IsOrderedStandardFunc(eBinaryOps);
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -312,7 +310,7 @@ OutputStandardFuncName(eBinaryOps eFunc, std::ostream &out)
  *
  */
 static void
-OutputActualParamExpression(Expression *expr, std::ostream *pOut)
+OutputActualParamExpression(Expression *expr, std::ostream *pOut, pool_vector<bool> &needcomma)
 {
 	std::ostream &out = *pOut;
 	if (needcomma.back()) {
@@ -328,9 +326,10 @@ OutputActualParamExpression(Expression *expr, std::ostream *pOut)
 static void
 OutputExpressionVector(const pool_vector<Expression*> &var, std::ostream &out)
 {
+	pool_vector<bool> needcomma;
 	needcomma.push_back(false);
 	for_each(var.begin(), var.end(),
-			 std::bind2nd(std::ptr_fun(OutputActualParamExpression), &out));
+			 std::bind(OutputActualParamExpression, std::placeholders::_1, &out, needcomma));
 	needcomma.pop_back();
 }
 

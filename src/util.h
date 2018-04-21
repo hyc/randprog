@@ -36,6 +36,7 @@
 
 pool_string gensym(const char *basename);
 pool_string gensym(const std::string &basename);
+void symReset(void);
 
 ///////////////////////////////////////////////////////////////////////////////
 

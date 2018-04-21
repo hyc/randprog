@@ -127,12 +127,24 @@ Type::make_random(void)
 void
 GenerateAllTypes(void)
 {
+	static bool inited = false;
 	while (AllTypesProbability()) {
 		AllTypes.push_back(Type::make_random());
 	}
-	for (int i = 0; i < MAX_SIMPLE_TYPES; ++i) {
-		Type::simple_types[i] = new Type((eSimpleType)i);
+	if (!inited) {
+		for (int i = 0; i < MAX_SIMPLE_TYPES; ++i) {
+			Type::simple_types[i] = new Type((eSimpleType)i);
+		}
+		inited = true;
 	}
+}
+
+// ---------------------------------------------------------------------
+void
+TypeReset(void)
+{
+	AllTypes.clear();
+	AllTypes.shrink_to_fit();
 }
 
 // ---------------------------------------------------------------------

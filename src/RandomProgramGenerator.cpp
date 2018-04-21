@@ -92,11 +92,16 @@ FUTURE:
 #include "Statement.h"
 #include "Type.h"
 #include "Variable.h"
+#include "Constant.h"
 
 #include "random.h"
+#include "util.h"
 #include "Hash.h"
 
 #include "RunJS.h"
+
+#include <stdio.h>
+#include <sys/time.h>
 
 using namespace std;
 
@@ -193,14 +198,14 @@ static int hex2bin( char *in, char *out0, int len )
 int
 main(int argc, char **argv)
 {
+	int seedlen;
+	char *seed;
+
 	if (argc == 2)
 		g_Seed = argv[1];
-	{
-		int len = strlen(g_Seed);
-		char *s2 = (char *)alloca(len/2);
-		len = hex2bin(g_Seed, s2, len);
-		seedrand(s2, len);
-	}
+	seedlen = strlen(g_Seed);
+	seed = (char *)alloca(seedlen/2);
+	seedlen = hex2bin(g_Seed, seed, seedlen);
 
 	if (CGOptions::print_hash()) {
 		CGOptions::compute_hash(true);
@@ -217,9 +222,11 @@ main(int argc, char **argv)
 	}
 
 	InitJS(argc, argv);
-	pool_init(1048576);
+	pool_init(20971520);
 
 	////
+
+	seedrand(seed, seedlen);
 
 	// Create a list of types that will be used by this program
 	GenerateAllTypes();
@@ -248,9 +255,49 @@ main(int argc, char **argv)
 		cout << hex[HashResult[i] & 15];
 	}
 	cout << endl;
+
+
+	if (seedlen == 76) {
+		int *nonceptr = (int *)(seed+39);
+		struct timeval beg, end;
+		gettimeofday(&beg, NULL);
+		for (int i = 0; i<1000; i++) {
+			printf("%d\n", i);
+			VariableReset();
+			ConstantReset();
+			FunctionReset();
+			TypeReset();
+			symReset();
+			pool_reset();
+
+			*nonceptr = i;
+			seedrand(seed, seedlen);
+			GenerateAllTypes();
+			GenerateFunctions();
+
+			std::ostringstream outbuf;
+			ostream &out = outbuf; // cout;
+			OutputHeader(out, argc, argv);
+			OutputGlobalVariables(out);
+			OutputFunctions(out);
+			OutputMain(out);
+
+			RunJS(&out, outbuf.str());
+			HashOut HashResult;
+			Hash(outbuf.str().c_str(), outbuf.str().size(), HashResult);
+		}
+		gettimeofday(&end, NULL);
+		end.tv_usec -= beg.tv_usec;
+		if (end.tv_usec < 0) {
+			end.tv_usec += 1000000;
+			end.tv_sec--;
+		}
+		end.tv_sec -= beg.tv_sec;
+		printf("1000 iters took %d.%06d seconds\n", end.tv_sec, end.tv_usec);
+	}
+
+
 	FiniJS();
-
-
 //	file.close();
 	return 0;
 }

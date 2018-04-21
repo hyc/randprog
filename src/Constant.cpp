@@ -154,6 +154,7 @@ Constant::make_random(CGContext &cg_context,
 	return new Constant(t, v);
 }
 
+static thread_local bool cache_inited = false;
 /*
  * Return a `Constant' representing the integer value `v'.  Note that the
  * return value may not be "fresh."
@@ -162,7 +163,6 @@ Constant *
 Constant::make_int(int v)
 {
 	static const int cache_size = 256;
-	static bool cache_inited = false;
 	static Constant *cache_constants[cache_size];
 
 	const Type &int_type = Type::get_simple_type(eInt);
@@ -208,6 +208,15 @@ void
 Constant::Output(std::ostream &out) const
 {
 	out << value;
+}
+
+/*
+ *
+ */
+void
+ConstantReset(void)
+{
+	cache_inited = false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
