@@ -4,6 +4,7 @@ Make it.  Move the compiled `randprog' program to where you want it.
 
 Tested on Cygwin, Ubuntu Feisty, Ubunty Gutsy.
 
-Needs libv8-dev
+Needs a recent build of libv8. I tested against git rev 0cd4b3d69d4f0178f4baf7251ffa97a647bc2941.
+The libv8 bundled in Ubuntu is too old so you'll probably have to build it yourself.
 
 ## End of file.
