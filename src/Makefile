@@ -9,8 +9,9 @@ PROG = randprog
 V8DIR=/home/software/v8
 V8BIN=$(V8DIR)/out.gn/x64.release
 
-CFLAGS=-g
-CXXFLAGS=-g -std=c++11
+OPT=-g
+CFLAGS=$(OPT)
+CXXFLAGS=$(OPT) -std=c++11
 
 all: $(PROG)
 

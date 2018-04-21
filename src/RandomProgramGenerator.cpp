@@ -256,12 +256,13 @@ main(int argc, char **argv)
 	}
 	cout << endl;
 
-
 	if (seedlen == 76) {
 		int *nonceptr = (int *)(seed+39);
 		struct timeval beg, end;
+#define ITERS	100
+		printf("Timing %d nonces\n", ITERS);
 		gettimeofday(&beg, NULL);
-		for (int i = 0; i<1000; i++) {
+		for (int i = 0; i<ITERS; i++) {
 			printf("%d\n", i);
 			VariableReset();
 			ConstantReset();
@@ -293,7 +294,7 @@ main(int argc, char **argv)
 			end.tv_sec--;
 		}
 		end.tv_sec -= beg.tv_sec;
-		printf("1000 iters took %d.%06d seconds\n", end.tv_sec, end.tv_usec);
+		printf("%d nonces took %d.%06d seconds\n", ITERS, (int)end.tv_sec, (int)end.tv_usec);
 	}
 
 
