@@ -222,6 +222,7 @@ main(int argc, char **argv)
 	}
 
 	InitJS(argc, argv);
+	InitJSthread();
 	pool_init(20971520);
 
 	////
@@ -259,7 +260,7 @@ main(int argc, char **argv)
 	if (seedlen == 76) {
 		int *nonceptr = (int *)(seed+39);
 		struct timeval beg, end;
-#define ITERS	100
+#define ITERS	1000
 		printf("Timing %d nonces\n", ITERS);
 		gettimeofday(&beg, NULL);
 		for (int i = 0; i<ITERS; i++) {
@@ -298,6 +299,7 @@ main(int argc, char **argv)
 	}
 
 
+	FiniJSthread();
 	FiniJS();
 //	file.close();
 	return 0;

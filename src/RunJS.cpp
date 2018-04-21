@@ -44,8 +44,16 @@ void InitJS(int argc, char*argv[]){
 	create_params.array_buffer_allocator = v8::ArrayBuffer::Allocator::NewDefaultAllocator();
 }
 
+static thread_local v8::Isolate *isolate;
+void InitJSthread() {
+	isolate = v8::Isolate::New(create_params);
+}
+
+void FiniJSthread() {
+	isolate->Dispose();
+}
+
 void RunJS(std::ostream *out, std::string src) {
-	v8::Isolate *isolate= v8::Isolate::New(create_params);
 	{
 		v8::Isolate::Scope isolate_scope(isolate);
 		v8::HandleScope handle_scope(isolate);
@@ -72,7 +80,6 @@ void RunJS(std::ostream *out, std::string src) {
 			}
 		}
 	}
-	isolate->Dispose();
 }
 
 void FiniJS() {
